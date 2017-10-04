@@ -25,10 +25,21 @@ package body Layout.Search is
                              Turnouts : out Turnout_List;
                              Success  : out Boolean) is
    begin
-      null;
-      -- First, try searching in the normal direction
+      Search(Start => Caboose,
+             Finish => Loco,
+             Direction => Normal,
+             Blocks => Blocks,
+             Turnouts => Turnouts,
+             Success => Success);
 
-      -- Next, try searching in the reverse direction
+      if not Success then
+         Search(Start => Caboose,
+                Finish => Loco,
+                Direction => Reversed,
+                Blocks => Blocks,
+                Turnouts => Turnouts,
+                Success => Success);
+      end if;
 
    end Blocks_Beneath;
 
