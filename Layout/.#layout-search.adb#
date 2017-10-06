@@ -149,7 +149,7 @@ package body Layout.Search is
          if not Success then
             Blocks.Size := Blocks.Size - 1;
             Turnouts.Size := Turnouts.Size -2;
-             Success := False;
+            Success := False;
          end if;
 
       else

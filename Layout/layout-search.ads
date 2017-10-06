@@ -79,4 +79,15 @@ package Layout.Search is
                              Turnouts : out Turnout_List;
                              Success  : out Boolean);
 
+      ----------------------------------------------------------------------------
+   -- Consider using this as a local recursive search procedure ...
+   ----------------------------------------------------------------------------
+   procedure Search (Start     : in     Block_ID;       -- Rear of train
+                     Finish    : in     Block_ID;       -- Front of train
+                     Direction : in     Block_Polarity; -- Search direction
+                     Blocks    : in out Block_List;     -- Under train
+                     Turnouts  : in out Turnout_List;   -- Under train
+                     Success   :        out Boolean);
+
+
 end Layout.Search;
