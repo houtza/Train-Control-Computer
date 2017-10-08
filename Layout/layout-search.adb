@@ -30,6 +30,8 @@ package body Layout.Search is
              Success   => Success);
 
       if not Success then
+         Ada.Text_IO.Put_Line ("DEBUG: HandleBlockTerminator - Setting to False after search of next block"); ----------------------------------------------------------
+         Ada.Text_IO.New_Line;
          Blocks.Size := Blocks.Size - 1;
          Success := False;
       end if;
@@ -149,7 +151,7 @@ package body Layout.Search is
          if not Success then
             Blocks.Size := Blocks.Size - 1;
             Turnouts.Size := Turnouts.Size -2;
-             Success := False;
+            Success := False;
          end if;
 
       else
@@ -213,14 +215,16 @@ package body Layout.Search is
                           Choice_Turnout_ID => Choice_Turnout_ID);
 
       -- search along the right limb of the choice turnout
-      SearchLimbOfTurnout(Start             => Start,
-                          Finish            => Finish,
-                          Direction         => Direction,
-                          Blocks            => Blocks,
-                          Turnouts          => Turnouts,
-                          Success           => Success,
-                          Turnout_Choice    => Right,
-                          Choice_Turnout_ID => Choice_Turnout_ID);
+      if not Success then
+         SearchLimbOfTurnout(Start             => Start,
+                             Finish            => Finish,
+                             Direction         => Direction,
+                             Blocks            => Blocks,
+                             Turnouts          => Turnouts,
+                             Success           => Success,
+                             Turnout_Choice    => Right,
+                             Choice_Turnout_ID => Choice_Turnout_ID);
+      end if;
    end HandleChoiceTurnout;
 
 
@@ -242,6 +246,9 @@ package body Layout.Search is
          if Has_Force_Turnout(Block     => Start,
                               Direction => Direction) then
 
+            Ada.Text_IO.Put_Line ("DEBUG: Force Turnout Decected"); ----------------------------------------------------------
+            Ada.Text_IO.New_Line;
+
             -- if force turnout is next, call handle function
             HandleForceTurnout(Start     => Start,
                                Finish    => Finish,
@@ -250,6 +257,9 @@ package body Layout.Search is
                                Turnouts  => Turnouts,
                                Success   => Success);
          else
+            Ada.Text_IO.Put_Line ("DEBUG: Choice Terminator Detected"); ----------------------------------------------------------
+            Ada.Text_IO.New_Line;
+
             -- if choice turnout is next, call handle function
             HandleChoiceTurnout(Start     => Start,
                                 Finish    => Finish,
@@ -260,6 +270,7 @@ package body Layout.Search is
          end if;
       end if;
    end HandleTurnoutTerminator;
+
 
    ----------------------------------------------------------------------------
    -- Consider using this as a local recursive search procedure ...
@@ -278,8 +289,12 @@ package body Layout.Search is
    begin
       if Blocks.Size = Blocks.Max_Size then
          -- We've exceeded the max block size. Train not found.
+         Ada.Text_IO.Put_Line ("DEBUG: Blocks Size is max. Setting Success to false"); ----------------------------------------------------------
+         Ada.Text_IO.New_Line;
          Success := False;
       elsif Start = Finish then
+         Ada.Text_IO.Put_Line ("DEBUG: Start = Finish. Success!"); ----------------------------------------------------------
+         Ada.Text_IO.New_Line;
          -- Success case. We've found what we were looking for
          Blocks.Size := Blocks.Size + 1;
          Blocks.Items(Blocks.Size) := StartBlock;
@@ -287,14 +302,22 @@ package body Layout.Search is
       else
          -- Need to check what's next after the start block
          if Terminating_Element = A_Block then
-                     -- If It's a block, call helper method for block.
+            Ada.Text_IO.Put_Line ("DEBUG: Block Terminator Detected"); ----------------------------------------------------------
+            Ada.Text_IO.New_Line;
+
+           -- If It's a block, call helper method for block.
             HandleBlockTerminator(Start     => Start,
                                   Finish    => Finish,
                                   Direction => Direction,
                                   Blocks    => Blocks,
                                   Turnouts  => Turnouts,
                                   Success   => Success);
+
          elsif Terminating_Element = A_Turnout then
+            Ada.Text_IO.Put_Line ("DEBUG: Turnout Terminator Detected"); ----------------------------------------------------------
+            Ada.Text_IO.New_Line;
+
+            -- If It's a turnout, call helper method for turnout.
             HandleTurnoutTerminator(Start     => Start,
                                     Finish    => Finish,
                                     Direction => Direction,
@@ -303,6 +326,8 @@ package body Layout.Search is
                                     Success   => Success);
          else
             --Handle dead end terminator
+             Ada.Text_IO.Put_Line ("DEBUG: Dead End Terminator Detected"); ----------------------------------------------------------
+             Ada.Text_IO.New_Line;
              Success := False;
          end if;
       end if;
@@ -315,6 +340,9 @@ package body Layout.Search is
                              Turnouts : out Turnout_List;
                              Success  : out Boolean) is
    begin
+      Ada.Text_IO.Put_Line ("DEBUG: Searching Normal Direction "); ----------------------------------------------------------
+      Ada.Text_IO.New_Line;
+
       Search(Start => Caboose,
              Finish => Loco,
              Direction => Normal,
@@ -323,6 +351,9 @@ package body Layout.Search is
              Success => Success);
 
       if not Success then
+         Ada.Text_IO.Put_Line ("DEBUG: Searching Reversed Direction "); ----------------------------------------------------------
+         Ada.Text_IO.New_Line;
+
          Search(Start => Caboose,
                 Finish => Loco,
                 Direction => Reversed,
