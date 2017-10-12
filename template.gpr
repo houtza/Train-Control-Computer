@@ -1,12 +1,11 @@
 project Template is
 
-   for Source_Dirs use (".", "Layout");
+   for Source_Dirs use (".", "Layout", "Port_IO");
    for Object_Dir use "./build/";
+   for Main use ("search_test.adb");
 
    package Pretty_Printer is
    end Pretty_Printer;
-
-   for Main use ("search_test.adb");
 
 end Template;
 
