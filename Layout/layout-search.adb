@@ -1,44 +1,5 @@
 package body Layout.Search is
    ----------------------------------------------------------------------------
-   --- Handle the case that a block follows the start block ...
-   ----------------------------------------------------------------------------
-   procedure HandleBlockTerminator (Start     : in     Block_ID;       -- Rear of train
-                                    Finish    : in     Block_ID;       -- Front of train
-                                    Direction : in     Block_Polarity; -- Search direction
-                                    Blocks    : in out Block_List;     -- Under train
-                                    Turnouts  : in out Turnout_List;   -- Under train
-                                    Success   : out Boolean) is
-
-      -- Variables --
-
-      StartBlock: Block_Rec := (Block => Start, Direction => Direction);
-      NextBlock: Block_ID := Next_Block(Block  => Start,
-                                        Direction => Direction);
-      Next_Hall_Reversing: Boolean := Is_Reversing(Next_Hall(Block   => Start,
-                                                             Direction => Direction));
-
-   begin
-      Blocks.Size := Blocks.Size + 1;
-      Blocks.Items(Blocks.Size) := StartBlock;
-
-      -- Call search once more, but with the next block as your start
-      Search(Start     => NextBlock,
-             Finish    => Finish,
-             Direction => (if Next_Hall_Reversing then Opposite(Direction => Direction) else Direction),
-             Blocks    => Blocks,
-             Turnouts  => Turnouts,
-             Success   => Success);
-
-      if not Success then
-         Ada.Text_IO.Put_Line ("DEBUG: HandleBlockTerminator - Setting to False after search of next block"); ----------------------------------------------------------
-         Ada.Text_IO.New_Line;
-         Blocks.Size := Blocks.Size - 1;
-         Success := False;
-      end if;
-   end HandleBlockTerminator;
-
-
-   ----------------------------------------------------------------------------
    --- Handle the case that the next turnout is a force turnout ...
    ----------------------------------------------------------------------------
    procedure HandleForceTurnout (Start     : in     Block_ID;       -- Rear of train
@@ -69,17 +30,14 @@ package body Layout.Search is
       Turnouts.Size := Turnouts.Size + 1;
       Turnouts.Items(Turnouts.Size) := Forced_Turnout;
 
-      -- need to add the start block to the list
-      Blocks.Size := Blocks.Size + 1;
-      Blocks.Items(Blocks.Size) := StartBlock;
 
-      NextBlock:= Next_Block(Turnout =>  Forced_Turnout_ID,
-                             Limb    =>  Forced_Turnout_Choice);
+
+      -- Call search with block that comes after the forced turnout.
+      NextBlock := Next_Block(Block  => Start,
+                                        Direction => Direction);
 
       Next_Hall_Reversing := Is_Reversing(Next_Hall(Block   => Start,
                                                     Direction => Direction));
-
-      -- Call search with block that comes after the forced turnout.
       Search(Start     => NextBlock,
              Finish    => Finish,
              Direction => (if Next_Hall_Reversing then Opposite(Direction => Direction) else Direction),
@@ -94,6 +52,62 @@ package body Layout.Search is
       end if;
    end HandleForceTurnout;
 
+
+
+   ----------------------------------------------------------------------------
+   --- Handle the case that a block follows the start block ...
+   ----------------------------------------------------------------------------
+   procedure HandleBlockTerminator (Start     : in     Block_ID;       -- Rear of train
+                                    Finish    : in     Block_ID;       -- Front of train
+                                    Direction : in     Block_Polarity; -- Search direction
+                                    Blocks    : in out Block_List;     -- Under train
+                                    Turnouts  : in out Turnout_List;   -- Under train
+                                    Success   : out Boolean) is
+
+      -- Variables --
+
+      StartBlock: Block_Rec := (Block => Start, Direction => Direction);
+      NextBlock: Block_ID := Next_Block(Block  => Start,
+                                        Direction => Direction);
+      Next_Hall_Reversing: Boolean := Is_Reversing(Next_Hall(Block   => Start,
+                                                             Direction => Direction));
+
+
+   begin
+      Blocks.Size := Blocks.Size + 1;
+      Blocks.Items(Blocks.Size) := StartBlock;
+
+      if Has_Force_Turnout(Block     => Start,
+                           Direction => Direction) then
+
+         Ada.Text_IO.Put_Line ("DEBUG: Force Turnout Decected for block - "); ----------------------------------------------------------
+         Ada.Text_IO.New_Line;
+
+         -- if force turnout is next, call handle function
+         HandleForceTurnout(Start     => Start,
+                            Finish    => Finish,
+                            Direction => Direction,
+                            Blocks    => Blocks,
+                            Turnouts  => Turnouts,
+                            Success   => Success);
+
+      else
+         -- Call search once more, but with the next block as your start
+         Search(Start     => NextBlock,
+                Finish    => Finish,
+                Direction => (if Next_Hall_Reversing then Opposite(Direction => Direction) else Direction),
+                Blocks    => Blocks,
+                Turnouts  => Turnouts,
+                Success   => Success);
+
+         if not Success then
+            Ada.Text_IO.Put_Line ("DEBUG: HandleBlockTerminator - Setting to False after search of next block"); ----------------------------------------------------------
+            Ada.Text_IO.New_Line;
+            Blocks.Size := Blocks.Size - 1;
+            Success := False;
+         end if;
+      end if;
+   end HandleBlockTerminator;
 
    ----------------------------------------------------------------------------
    --- Search the Left Limb of a choice turnout ...
@@ -123,10 +137,16 @@ package body Layout.Search is
          Joint_Turnout_ID := Joint_Turnout(Turnout   => Choice_Turnout_ID,
                                            Direction => Turnout_Choice);
 
+         Ada.Text_IO.Put_Line ("DEBUG: SearchLimbOfTurnout - Joint Turnout detected fam"); ----------------------------------------------------------
+         Ada.Text_IO.New_Line;
+
          Joint_Turnout_Obj := (Turnout => Joint_Turnout_ID, Direction => Turnout_Choice);
          Choice_Turnout := (Turnout => Choice_Turnout_ID, Direction => Turnout_Choice);
          Turnouts.Size := Turnouts.Size + 2;
-         Turnouts.Items(Turnouts.Size -1) := Joint_Turnout_Obj;
+         Turnouts.Items(Turnouts.Size - 1) := Joint_Turnout_Obj;
+
+         Ada.Text_IO.Put_Line ("DEBUG: SearchLimbOfTurnout - adding second turnout to list for joint turnout"); ----------------------------------------------------------
+         Ada.Text_IO.New_Line;
          Turnouts.Items(Turnouts.Size) := Choice_Turnout;
 
 
@@ -134,11 +154,11 @@ package body Layout.Search is
          Blocks.Size := Blocks.Size + 1;
          Blocks.Items(Blocks.Size) := StartBlock;
 
-         NextBlock := Next_Block(Turnout => Joint_Turnout_ID,
+         NextBlock := Next_Block(Turnout => Choice_Turnout_ID,
                                  Limb    => Turnout_Choice);
 
-         Next_Hall_Reversing := Is_Reversing(Next_Hall(Block   => Start,
-                                                       Direction => Direction));
+         Next_Hall_Reversing := Is_Reversing(Next_Hall(Turnout   => Choice_Turnout_ID,
+                                                       Direction => Turnout_Choice));
 
          -- search with the block that follows the joint turnout for the given limb
          Search(Start     => NextBlock,
@@ -155,6 +175,8 @@ package body Layout.Search is
          end if;
 
       else
+         Ada.Text_IO.Put_Line ("DEBUG: SearchLimbOfTurnout - not a joint turnout"); ----------------------------------------------------------
+         Ada.Text_IO.New_Line;
           -- add choice turnout to the list
          Choice_Turnout := (Turnout => Choice_Turnout_ID, Direction => Turnout_Choice);
          Turnouts.Size := Turnouts.Size + 1;
@@ -168,8 +190,8 @@ package body Layout.Search is
          NextBlock := Next_Block(Turnout => Choice_Turnout_ID,
                                  Limb    => Turnout_Choice);
 
-         Next_Hall_Reversing := Is_Reversing(Next_Hall(Block   => Start,
-                                                       Direction => Direction));
+         Next_Hall_Reversing := Is_Reversing(Next_Hall(Turnout   => Choice_Turnout_ID,
+                                                       Direction => Turnout_Choice));
 
          -- search with the block that follows the choice turnout for the given limb
          Search(Start     => NextBlock,
@@ -180,6 +202,8 @@ package body Layout.Search is
                 Success   => Success);
 
          if not Success then
+            Ada.Text_IO.Put_Line ("DEBUG: SearchLimbOfTurnout - not sucess"); ----------------------------------------------------------
+            Ada.Text_IO.New_Line;
             Blocks.Size := Blocks.Size - 1;
             Turnouts.Size := Turnouts.Size -1;
             Success := False;
@@ -204,6 +228,9 @@ package body Layout.Search is
    begin
       Choice_Turnout_ID := Choice_Turnout(Block     => Start,
                                           Direction => Normal);
+
+      Ada.Text_IO.Put_Line ("DEBUG: HandleChoiceTurnout - searching left limb"); ----------------------------------------------------------
+      Ada.Text_IO.New_Line;
       -- search along the left limb of the choice turnout
       SearchLimbOfTurnout(Start             => Start,
                           Finish            => Finish,
@@ -216,6 +243,8 @@ package body Layout.Search is
 
       -- search along the right limb of the choice turnout
       if not Success then
+         Ada.Text_IO.Put_Line ("DEBUG: HandleChoiceTurnout - searching right limb"); ----------------------------------------------------------
+         Ada.Text_IO.New_Line;
          SearchLimbOfTurnout(Start             => Start,
                              Finish            => Finish,
                              Direction         => Direction,
@@ -243,31 +272,16 @@ package body Layout.Search is
       if Turnouts.Size = Turnouts.Max_Size then
          Success := False;
       else
-         if Has_Force_Turnout(Block     => Start,
-                              Direction => Direction) then
-
-            Ada.Text_IO.Put_Line ("DEBUG: Force Turnout Decected"); ----------------------------------------------------------
-            Ada.Text_IO.New_Line;
-
-            -- if force turnout is next, call handle function
-            HandleForceTurnout(Start     => Start,
-                               Finish    => Finish,
-                               Direction => Direction,
-                               Blocks    => Blocks,
-                               Turnouts  => Turnouts,
-                               Success   => Success);
-         else
             Ada.Text_IO.Put_Line ("DEBUG: Choice Terminator Detected"); ----------------------------------------------------------
             Ada.Text_IO.New_Line;
 
-            -- if choice turnout is next, call handle function
+            -- a choice turnout is next, call handle function
             HandleChoiceTurnout(Start     => Start,
                                 Finish    => Finish,
                                 Direction => Direction,
                                 Blocks    => Blocks,
                                 Turnouts  => Turnouts,
                                 Success   => Success);
-         end if;
       end if;
    end HandleTurnoutTerminator;
 
@@ -342,6 +356,11 @@ package body Layout.Search is
    begin
       Ada.Text_IO.Put_Line ("DEBUG: Searching Normal Direction "); ----------------------------------------------------------
       Ada.Text_IO.New_Line;
+
+      --Reset list if they had previous values.
+      --In case of repeat calls to this method
+      Turnouts.Size := 0;
+      Blocks.Size := 0;
 
       Search(Start => Caboose,
              Finish => Loco,
