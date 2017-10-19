@@ -2,10 +2,18 @@ project Template is
 
    for Source_Dirs use (".", "Layout", "Port_IO");
    for Object_Dir use "./build/";
-   for Main use ("search_test.adb");
    type Target_Type is
       ("MaRTE", "Native");
    Target : Target_Type := external ("Target", "Native");
+
+   case Target is
+
+      when "MaRTE" =>
+         for Main use ("helloworld.adb", "search_test.adb");
+
+      when "Native" =>
+         for Main use ("helloworld.adb", "search_test.adb");
+   end case;
 
    package Pretty_Printer is
    end Pretty_Printer;
@@ -18,7 +26,7 @@ project Template is
             for Compiler_Command ("ada") use "mgnatmake";
 
          when "Native" =>
-            for Compiler_Command ("ada") use "mgnatmake";
+
       end case;
    end Ide;
 
