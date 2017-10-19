@@ -3,8 +3,8 @@
 -- This child package provides types and a procedure to determine the
 -- blocks and the turnouts beneath a train given the location of its
 -- locomotive and caboose.
-with Ada.Text_IO;
 package Layout.Search is
+   pragma Pure (Layout.Search);
 
    ----------------------------------------------------------------------------
    -- Types for a list of blocks (All details are public)
