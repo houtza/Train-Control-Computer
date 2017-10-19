@@ -3,9 +3,48 @@ project Template is
    for Source_Dirs use (".", "Layout", "Port_IO");
    for Object_Dir use "./build/";
    for Main use ("search_test.adb");
+   type Target_Type is
+      ("MaRTE", "Native");
+   Target : Target_Type := external ("Target", "Native");
 
    package Pretty_Printer is
    end Pretty_Printer;
+
+   package Ide is
+
+      case Target is
+
+         when "MaRTE" =>
+            for Compiler_Command ("ada") use "mgnatmake";
+
+         when "Native" =>
+            for Compiler_Command ("ada") use "mgnatmake";
+      end case;
+   end Ide;
+
+   package Builder is
+
+      case Target is
+
+         when "MaRTE" =>
+            for Default_Switches ("ada") use ("-g", "-C", "-x", "-o", "build/mprogram");
+
+         when "Native" =>
+            for Default_Switches ("ada") use ("-g", "-C", "--RTS=native");
+      end case;
+   end Builder;
+
+   package Compiler is
+
+      case Target is
+
+         when "MaRTE" =>
+            for Default_Switches ("ada") use ("-g");
+
+         when "Native" =>
+            for Default_Switches ("ada") use ("-g");
+      end case;
+   end Compiler;
 
 end Template;
 
