@@ -224,7 +224,7 @@ package body Layout.Search is
 
       -- Local variables
       Choice_Turnout_ID: Turnout_ID := Choice_Turnout(Block     => Start,
-                                                      Direction => Normal);
+                                                      Direction => Direction);
    begin
       -- Search along the left limb of the choice turnout
       SearchLimbOfTurnout(Start             => Start,
