@@ -2,17 +2,18 @@ package body Layout.Search is
    ----------------------------------------------------------------------------
    --- Handle the case that the next turnout is a force turnout ...
    ----------------------------------------------------------------------------
-   procedure HandleForceTurnout (Start     : in     Block_ID;       -- Rear of train
-                                 Finish    : in     Block_ID;       -- Front of train
-                                 Direction : in     Block_Polarity; -- Search direction
-                                 Blocks    : in out Block_List;     -- Under train
-                                 Turnouts  : in out Turnout_List;   -- Under train
-                                 Success   : out Boolean) is
+   procedure Handle_Force_Turnout (Start     : in     Block_ID;       -- Rear of train
+                                   Finish    : in     Block_ID;       -- Front of train
+                                   Direction : in     Block_Polarity; -- Search direction
+                                   Blocks    : in out Block_List;     -- Under train
+                                   Turnouts  : in out Turnout_List;   -- Under train
+                                   Success   : out Boolean) is
 
       -- Local variables
-      StartBlock: Block_Rec := (Block => Start, Direction => Direction);
-      NextBlock: Block_ID := Next_Block(Block  => Start,
-                                       Direction => Direction);
+      Start_Block: Block_Rec := (Block => Start, Direction => Direction);
+
+      Next_Block_ID: Block_ID := Next_Block(Block  => Start,
+                                            Direction => Direction);
 
       Next_Hall_Reversing: Boolean
         := Is_Reversing(Next_Hall(Block   => Start,
@@ -34,7 +35,7 @@ package body Layout.Search is
       Turnouts.Items(Turnouts.Size) := Forced_Turnout;
 
       -- Call search with block that comes after the forced turnout.
-      Search(Start     => NextBlock,
+      Search(Start     => Next_Block_ID,
              Finish    => Finish,
              Direction => (if Next_Hall_Reversing
                            then Opposite(Direction => Direction)
@@ -49,24 +50,24 @@ package body Layout.Search is
          Turnouts.Size := Turnouts.Size -1;
          Success := False;
       end if;
-   end HandleForceTurnout;
+   end Handle_Force_Turnout;
 
 
    ----------------------------------------------------------------------------
    --- Handle the case that a block follows the start block ...
    ----------------------------------------------------------------------------
-   procedure HandleBlockTerminator (Start     : in     Block_ID;       -- Rear of train
-                                    Finish    : in     Block_ID;       -- Front of train
-                                    Direction : in     Block_Polarity; -- Search direction
-                                    Blocks    : in out Block_List;     -- Under train
-                                    Turnouts  : in out Turnout_List;   -- Under train
-                                    Success   : out Boolean) is
+   procedure Handle_Block_Terminator (Start     : in     Block_ID;       -- Rear of train
+                                      Finish    : in     Block_ID;       -- Front of train
+                                      Direction : in     Block_Polarity; -- Search direction
+                                      Blocks    : in out Block_List;     -- Under train
+                                      Turnouts  : in out Turnout_List;   -- Under train
+                                      Success   : out Boolean) is
 
       -- Local variables
-      StartBlock: Block_Rec := (Block => Start, Direction => Direction);
+      Start_Block: Block_Rec := (Block => Start, Direction => Direction);
 
-      NextBlock: Block_ID := Next_Block(Block  => Start,
-                                        Direction => Direction);
+      Next_Block_ID: Block_ID := Next_Block(Block  => Start,
+                                            Direction => Direction);
       Next_Hall_Reversing: Boolean
         := Is_Reversing(Next_Hall(Block   => Start,
                                   Direction => Direction));
@@ -75,21 +76,21 @@ package body Layout.Search is
    begin
       -- Add start block to list
       Blocks.Size := Blocks.Size + 1;
-      Blocks.Items(Blocks.Size) := StartBlock;
+      Blocks.Items(Blocks.Size) := Start_Block;
 
       if Has_Force_Turnout(Block     => Start,
                            Direction => Direction) then
 
          -- If force turnout is next, call handle function
-         HandleForceTurnout(Start     => Start,
-                            Finish    => Finish,
-                            Direction => Direction,
-                            Blocks    => Blocks,
-                            Turnouts  => Turnouts,
-                            Success   => Success);
+         Handle_Force_Turnout(Start     => Start,
+                              Finish    => Finish,
+                              Direction => Direction,
+                              Blocks    => Blocks,
+                              Turnouts  => Turnouts,
+                              Success   => Success);
       else
          -- Call search with the next block as your start
-         Search(Start     => NextBlock,
+         Search(Start     => Next_Block_ID,
                 Finish    => Finish,
                 Direction => (if Next_Hall_Reversing
                               then Opposite(Direction => Direction)
@@ -104,24 +105,24 @@ package body Layout.Search is
             Success := False;
          end if;
       end if;
-   end HandleBlockTerminator;
+   end Handle_Block_Terminator;
 
 
    ----------------------------------------------------------------------------
    --- Search a given limb of a choice turnout (Takes in the turnout choice)...
    ----------------------------------------------------------------------------
-   procedure SearchLimbOfTurnout (Start            : in     Block_ID;       -- Rear of train
-                                  Finish           : in     Block_ID;       -- Front of train
-                                  Direction        : in     Block_Polarity; -- Search direction
-                                  Blocks           : in out Block_List;     -- Under train
-                                  Turnouts         : in out Turnout_List;   -- Under train
-                                  Success          : out Boolean;
-                                  Turnout_Choice   : in Turn_Choice;
-                                  Choice_Turnout_ID: in Turnout_ID) is
+   procedure Search_Limb_Of_Turnout (Start            : in     Block_ID;       -- Rear of train
+                                     Finish           : in     Block_ID;       -- Front of train
+                                     Direction        : in     Block_Polarity; -- Search direction
+                                     Blocks           : in out Block_List;     -- Under train
+                                     Turnouts         : in out Turnout_List;   -- Under train
+                                     Success          : out Boolean;
+                                     Turnout_Choice   : in Turn_Choice;
+                                     Choice_Turnout_ID: in Turnout_ID) is
 
       -- Local variables
-      StartBlock: Block_Rec := (Block => Start, Direction => Direction);
-      NextBlock: Block_ID;
+      Start_Block: Block_Rec := (Block => Start, Direction => Direction);
+      Next_Block_ID: Block_ID;
       Next_Hall_Reversing: Boolean;
       Choice_Turnout: Turnout_Rec;
       Joint_Turnout_ID: Turnout_ID;
@@ -147,17 +148,17 @@ package body Layout.Search is
 
          -- Need to add the start block to the list
          Blocks.Size := Blocks.Size + 1;
-         Blocks.Items(Blocks.Size) := StartBlock;
+         Blocks.Items(Blocks.Size) := Start_Block;
 
-         NextBlock := Next_Block(Turnout => Choice_Turnout_ID,
-                                 Limb    => Turnout_Choice);
+         Next_Block_ID := Next_Block(Turnout => Choice_Turnout_ID,
+                                     Limb    => Turnout_Choice);
 
          Next_Hall_Reversing
            := Is_Reversing(Next_Hall(Turnout   => Choice_Turnout_ID,
                                      Direction => Turnout_Choice));
 
          -- Search with the block that follows the joint turnout for the given limb
-         Search(Start     => NextBlock,
+         Search(Start     => Next_Block_ID,
                 Finish    => Finish,
                 Direction => (if Next_Hall_Reversing
                               then Opposite(Direction => Direction)
@@ -168,7 +169,7 @@ package body Layout.Search is
 
          if not Success then
             -- Search failed after searching joint turnout limb.
-            -- Decrement bkicjs and turnouts size.
+            -- Decrement blocks and turnouts size.
             Blocks.Size := Blocks.Size - 1;
             Turnouts.Size := Turnouts.Size -2;
             Success := False;
@@ -182,17 +183,17 @@ package body Layout.Search is
 
          -- Need to add the start block to the list
          Blocks.Size := Blocks.Size + 1;
-         Blocks.Items(Blocks.Size) := StartBlock;
+         Blocks.Items(Blocks.Size) := Start_Block;
 
-         NextBlock := Next_Block(Turnout => Choice_Turnout_ID,
-                                 Limb    => Turnout_Choice);
+         Next_Block_ID := Next_Block(Turnout => Choice_Turnout_ID,
+                                     Limb    => Turnout_Choice);
 
          Next_Hall_Reversing
            := Is_Reversing(Next_Hall(Turnout   => Choice_Turnout_ID,
                                      Direction => Turnout_Choice));
 
          -- Search with the block that follows the choice turnout for the given limb
-         Search(Start     => NextBlock,
+         Search(Start     => Next_Block_ID,
                 Finish    => Finish,
                 Direction => (if Next_Hall_Reversing
                               then Opposite(Direction => Direction)
@@ -209,46 +210,46 @@ package body Layout.Search is
          end if;
       end if;
 
-   end SearchLimbOfTurnout;
+   end Search_Limb_Of_Turnout;
 
 
    ----------------------------------------------------------------------------
    --- Handle the case that the next turnout is a choice turnout ...
    ----------------------------------------------------------------------------
-   procedure HandleChoiceTurnout (Start    : in     Block_ID;       -- Rear of train
-                                 Finish    : in     Block_ID;       -- Front of train
-                                 Direction : in     Block_Polarity; -- Search direction
-                                 Blocks    : in out Block_List;     -- Under train
-                                 Turnouts  : in out Turnout_List;   -- Under train
-                                 Success   : out Boolean) is
+   procedure Handle_Choice_Turnout (Start    : in     Block_ID;       -- Rear of train
+                                    Finish    : in     Block_ID;       -- Front of train
+                                    Direction : in     Block_Polarity; -- Search direction
+                                    Blocks    : in out Block_List;     -- Under train
+                                    Turnouts  : in out Turnout_List;   -- Under train
+                                    Success   : out Boolean) is
 
       -- Local variables
       Choice_Turnout_ID: Turnout_ID := Choice_Turnout(Block     => Start,
                                                       Direction => Direction);
    begin
       -- Search along the left limb of the choice turnout
-      SearchLimbOfTurnout(Start             => Start,
-                          Finish            => Finish,
-                          Direction         => Direction,
-                          Blocks            => Blocks,
-                          Turnouts          => Turnouts,
-                          Success           => Success,
-                          Turnout_Choice    => Left,
-                          Choice_Turnout_ID => Choice_Turnout_ID);
-
-      -- Search along the right limb of the choice turnout if we didn't
-      -- find the Finish block on the left limb.
-      if not Success then
-         SearchLimbOfTurnout(Start             => Start,
+      Search_Limb_Of_Turnout(Start             => Start,
                              Finish            => Finish,
                              Direction         => Direction,
                              Blocks            => Blocks,
                              Turnouts          => Turnouts,
                              Success           => Success,
-                             Turnout_Choice    => Right,
+                             Turnout_Choice    => Left,
                              Choice_Turnout_ID => Choice_Turnout_ID);
+
+      -- Search along the right limb of the choice turnout if we didn't
+      -- find the Finish block on the left limb.
+      if not Success then
+         Search_Limb_Of_Turnout(Start             => Start,
+                                Finish            => Finish,
+                                Direction         => Direction,
+                                Blocks            => Blocks,
+                                Turnouts          => Turnouts,
+                                Success           => Success,
+                                Turnout_Choice    => Right,
+                                Choice_Turnout_ID => Choice_Turnout_ID);
       end if;
-   end HandleChoiceTurnout;
+   end Handle_Choice_Turnout;
 
 
    ----------------------------------------------------------------------------
@@ -262,7 +263,7 @@ package body Layout.Search is
                      Success   : out Boolean) is
 
       -- Local variables
-      StartBlock: Block_Rec := (Block => Start, Direction => Direction);
+      Start_Block: Block_Rec := (Block => Start, Direction => Direction);
 
       Terminating_Element: Termination_Type
         := Terminated_By(Block     => Start,
@@ -274,18 +275,18 @@ package body Layout.Search is
       elsif Start = Finish then
          -- Success case. We've found what we were looking for.
          Blocks.Size := Blocks.Size + 1;
-         Blocks.Items(Blocks.Size) := StartBlock;
+         Blocks.Items(Blocks.Size) := Start_Block;
          Success := True;
       else
          -- Need to check what's next after the start block
          if Terminating_Element = A_Block then
             -- If It's a block, call helper method for block.
-            HandleBlockTerminator(Start     => Start,
-                                  Finish    => Finish,
-                                  Direction => Direction,
-                                  Blocks    => Blocks,
-                                  Turnouts  => Turnouts,
-                                  Success   => Success);
+            Handle_Block_Terminator(Start     => Start,
+                                    Finish    => Finish,
+                                    Direction => Direction,
+                                    Blocks    => Blocks,
+                                    Turnouts  => Turnouts,
+                                    Success   => Success);
 
          elsif Terminating_Element = A_Turnout then
             -- a choice turnout is next, call handle function
@@ -293,12 +294,12 @@ package body Layout.Search is
             if Turnouts.Size = Turnouts.Max_Size then
                Success := False;
             else
-               HandleChoiceTurnout(Start     => Start,
-                                   Finish    => Finish,
-                                   Direction => Direction,
-                                   Blocks    => Blocks,
-                                   Turnouts  => Turnouts,
-                                   Success   => Success);
+               Handle_Choice_Turnout(Start     => Start,
+                                     Finish    => Finish,
+                                     Direction => Direction,
+                                     Blocks    => Blocks,
+                                     Turnouts  => Turnouts,
+                                     Success   => Success);
             end if;
          else
             -- Handle dead end terminator
