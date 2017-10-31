@@ -559,12 +559,12 @@ begin
    Test_Two_Sequential_Blocks_Succeed_With_Normal_Direction;
    Test_Two_Sequential_Blocks_Succeed_With_Reversed_Direction;
 
-   --forced turnout tests
+   -- forced turnout tests
    Test_Two_Sequential_Blocks_Succeed_While_Over_Forced_Turnout_Left_Limb;
    Test_Two_Sequential_Blocks_Succeed_While_Over_Forced_Turnout_Right_Limb;
    Test_Two_Sequential_Blocks_Succeed_While_Over_Forced_Turnout_Reversed_Direction;
 
-   --choice turnout tests
+   -- choice turnout tests
    Test_Two_Sequential_Blocks_Succeed_While_Over_Choice_Turnout_Left_Limb;
    Test_Two_Sequential_Blocks_Succeed_While_Over_Choice_Turnout_Right_Limb;
    Test_Two_Sequential_Blocks_Succeed_While_Over_Choice_Turnout_Reversed_Direction;
