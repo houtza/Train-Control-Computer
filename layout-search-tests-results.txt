@@ -1,0 +1,100 @@
+Test output for search_test.exe.
+Ran by: Justice Adams
+Date Passed: 10/30/17
+
+## Note that all the test pass. I set up the unit test in a way so that if you run the file, you should see the same exact
+   output. Feel free to try it yourself
+
+
+-----------------------------------------------------------------------------------------------------------------------------------------
+Testing that a search for a train on two sequential blocks works, and is correct
+CABOOSE: 11
+LOCOMOTIVE: 01
+EXPECTED BLOCKS: {(11, Normal), (1, Normal)} 
+EXPECTED TURNOUTS: Null 
+EXPECTED SEARCH PASS/FAIL: Pass 
+-----------------------------------------------------------------------------------------------------------------------------------------
+Testing that a search for a train on two sequential blocks works, and is correct (with reversed direction
+CABOOSE: 1
+LOCOMOTIVE: 11
+EXPECTED BLOCKS: {(1, Reversed), (11, Reversed)} 
+EXPECTED TURNOUTS: Null 
+EXPECTED SEARCH PASS/FAIL: Pass 
+-----------------------------------------------------------------------------------------------------------------------------------------
+Testing that a search for a train on two sequential blocks works, and is correct when on top of a left limb forced turnout
+CABOOSE: 26
+LOCOMOTIVE: 15
+EXPECTED BLOCKS: {(26, Normal), (15 Normal)} 
+EXPECTED TURNOUTS: {(4, Left)} 
+EXPECTED SEARCH PASS/FAIL: Pass 
+-----------------------------------------------------------------------------------------------------------------------------------------
+Testing that a search for a train on two sequential blocks works, and is correct when on top of a right limb forced turnout
+CABOOSE: 7
+LOCOMOTIVE: 8
+EXPECTED BLOCKS: {(7, Normal), (8 Normal)} 
+EXPECTED TURNOUTS: {(10, Right)} 
+EXPECTED SEARCH PASS/FAIL: Pass 
+-----------------------------------------------------------------------------------------------------------------------------------------
+Testing that a search for a train on two sequential blocks works, and is correct when on top of a forced turnout with a reversing hall
+CABOOSE: 32
+LOCOMOTIVE: 31
+EXPECTED BLOCKS: {(32, Reversed), (31, Normal)} 
+EXPECTED TURNOUTS: {(16, Right)} 
+EXPECTED SEARCH PASS/FAIL: Pass 
+-----------------------------------------------------------------------------------------------------------------------------------------
+Testing that a search for a train on two sequential blocks works, and is correct when on top of a left limb choice turnout
+CABOOSE: 8
+LOCOMOTIVE: 9
+EXPECTED BLOCKS: {(8, Normal), (9 Normal)} 
+EXPECTED TURNOUTS: {(12, Left)} 
+EXPECTED SEARCH PASS/FAIL: Pass 
+-----------------------------------------------------------------------------------------------------------------------------------------
+Testing that a search for a train on two sequential blocks works, and is correct when on top of a left limb choice turnout
+CABOOSE: 8
+LOCOMOTIVE: 27
+EXPECTED BLOCKS: {(8, Normal), (27 Normal)} 
+EXPECTED TURNOUTS: {(12, Left)} 
+EXPECTED SEARCH PASS/FAIL: Pass 
+-----------------------------------------------------------------------------------------------------------------------------------------
+Testing that a search for a train on two sequential blocks works, and is correct when on top of a choice turnout with a reversing hall
+CABOOSE: 32
+LOCOMOTIVE: 31
+EXPECTED BLOCKS: {(31, Reversed), (32, Normal)} 
+EXPECTED TURNOUTS: {(16, Right)} 
+EXPECTED SEARCH PASS/FAIL: Pass 
+-----------------------------------------------------------------------------------------------------------------------------------------
+Testing that a search for a train on two sequential blocks works in the normal direction, and is correct when on top of a joint turnout
+CABOOSE: 13
+LOCOMOTIVE: 2
+EXPECTED BLOCKS: {(13, Normal), (2 Normal)} 
+EXPECTED TURNOUTS: {(2, Left), (3, Left)} 
+EXPECTED SEARCH PASS/FAIL: Pass 
+-----------------------------------------------------------------------------------------------------------------------------------------
+Testing that a search for a train on two sequential blocks works in the reversed direction, and is correct when on top of a joint turnout
+CABOOSE: 2
+LOCOMOTIVE: 13
+EXPECTED BLOCKS: {(2, Reversed), (13 Reversed)} 
+EXPECTED TURNOUTS: {(3, Left), (2, Left)} 
+EXPECTED SEARCH PASS/FAIL: Pass 
+-----------------------------------------------------------------------------------------------------------------------------------------
+Testing that a search for a train on top of multiple turnouts still succeeds
+CABOOSE: 6
+LOCOMOTIVE: 11
+EXPECTED BLOCKS: {(7, Normal), (8 Normal), (9 Normal), (10 Normal), (11 Normal)} 
+EXPECTED TURNOUTS: {(10, Right), (12, Left), (13, Left, (15, Left)} 
+EXPECTED SEARCH PASS/FAIL: Pass 
+-----------------------------------------------------------------------------------------------------------------------------------------
+Testing that a search for a train fails when deadend found or max_blocks limit reached in search
+CABOOSE: 40
+LOCOMOTIVE: 11
+EXPECTED BLOCKS: Null
+EXPECTED TURNOUTS: Null
+EXPECTED SEARCH PASS/FAIL: Fail 
+-----------------------------------------------------------------------------------------------------------------------------------------
+Testing that a search for a train fails when max_turnouts limit reached in search
+CABOOSE: 9
+LOCOMOTIVE: 7
+EXPECTED BLOCKS: Null
+EXPECTED TURNOUTS: Null
+EXPECTED SEARCH PASS/FAIL: Fail 
+[2017-10-30 22:07:45] process terminated successfully, elapsed time: 00.90s
