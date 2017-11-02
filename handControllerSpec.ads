@@ -17,7 +17,7 @@ package Hand_Controllers is
 			            turn_switch: out Direction_Switch_Type);
 					  
 					  
-	procedure Get_Analog_State(ID : in Controller_ID; Controller_Voltage : out Analog_Voltage);
+	procedure Get_Analog_State(ID : in Controller_ID; Controller_Voltage : out Throttle_Level);
 	                         
 
 							 
