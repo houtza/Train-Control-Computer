@@ -38,7 +38,7 @@ project Template is
             for Default_Switches ("ada") use ("-g", "-C", "-x", "-o", "build/mprogram");
 
          when "Native" =>
-            for Default_Switches ("ada") use ("-g", "-C", "--RTS=native");
+            for Default_Switches ("ada") use ("-g", "-C");
       end case;
    end Builder;
 
