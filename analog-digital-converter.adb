@@ -31,7 +31,7 @@ begin
 
    -- Have to do twice to avoid glitchyness
    For_Loop :
-   for I in Integer range 1 .. 10 loop
+   for I in Integer range 1 .. 2 loop
 
       -- write channel to Base + 2
       Port_IO.Out_Byte(Address => Base_Adress + 2,
