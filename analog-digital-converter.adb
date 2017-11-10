@@ -49,6 +49,7 @@ begin
 
       -- Set Final Value
       Final_Voltage := Port_IO.In_Word(Base_Adress);
+      Final_Voltage := Final_Voltage/16;
       Value := ((Final_Voltage/4095)*10) - 5;
    end loop For_Loop;
 
