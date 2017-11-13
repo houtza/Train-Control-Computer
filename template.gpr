@@ -1,6 +1,5 @@
 project Template is
 
-   for Source_Dirs use (".", "Layout", "Port_IO");
    for Object_Dir use "./build/";
    type Target_Type is
       ("MaRTE", "Native");
@@ -9,9 +8,11 @@ project Template is
    case Target is
 
       when "MaRTE" =>
+         for Source_Dirs use (".", "Layout", "Port_IO");
          for Main use ("helloworld.adb", "search_test.adb");
 
       when "Native" =>
+         for Source_Dirs use (".", "Layout", "Port_IO", "hand_controller");
          for Main use ("helloworld.adb", "search_test.adb");
    end case;
 
