@@ -1,6 +1,6 @@
--- Semaphore object since we need to delay within.
 package body Analog_Digital_Converter is
 
+   -- Semaphore object since we need to delay within.
    protected type Semaphore is
       procedure Release;
       entry Wait;
@@ -51,8 +51,8 @@ package body Analog_Digital_Converter is
 
          -- Set Final Value
          Final_Voltage := Port_IO.In_Word(Base_Adress);
-         Final_Voltage := Final_Voltage/16;
-         Value := ((Final_Voltage/4095)*10) - 5;
+         Value := Voltage_Range(Final_Voltage)/16.0;
+         Value := ((Value/4095.0)*10.0) - 5.0;
       end loop For_Loop;
 
       Semaphore.Release;
