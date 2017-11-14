@@ -19,7 +19,7 @@ procedure Button_Counter is
    Red_Button : Hand_Controllers.Button_State_Type;
    Black_Button : Hand_Controllers.Button_State_Type;
    Direction_Switch: Hand_Controllers.Direction_Switch_Type;
-   Turn_Switch: Hand_Controllers.Direction_Switch_Type;
+   Turn_Switch: Hand_Controllers.Turn_Switch;
 
 begin
    loop
