@@ -22,6 +22,7 @@ package body Layout.Search is
       Forced_Turnout_ID: Turnout_ID;
       Forced_Turnout: Turnout_Rec;
       Forced_Turnout_Choice: Turn_Choice;
+      Search_Direction: Block_Polarity := Direction;
    begin
       Get_Force_Turnout(Block              => Start,
                         Direction          => Direction,
@@ -34,12 +35,13 @@ package body Layout.Search is
       Turnouts.Size := Turnouts.Size + 1;
       Turnouts.Items(Turnouts.Size) := Forced_Turnout;
 
-      -- Call search with block that comes after the forced turnout.
+      if Next_Hall_Reversing then
+         Search_Direction := Opposite(Direction => Direction);
+      end if;
+
       Search(Start     => Next_Block_ID,
              Finish    => Finish,
-             Direction => (if Next_Hall_Reversing
-                           then Opposite(Direction => Direction)
-                           else Direction),
+             Direction => Search_Direction,
              Blocks    => Blocks,
              Turnouts  => Turnouts,
              Success   => Success);
@@ -72,6 +74,8 @@ package body Layout.Search is
         := Is_Reversing(Next_Hall(Block   => Start,
                                   Direction => Direction));
 
+      Search_Direction: Block_Polarity := Direction;
+
 
    begin
       -- Add start block to list
@@ -90,11 +94,13 @@ package body Layout.Search is
                               Success   => Success);
       else
          -- Call search with the next block as your start
+          if Next_Hall_Reversing then
+            Search_Direction := Opposite(Direction => Direction);
+         end if;
+
          Search(Start     => Next_Block_ID,
                 Finish    => Finish,
-                Direction => (if Next_Hall_Reversing
-                              then Opposite(Direction => Direction)
-                              else Direction),
+                Direction => Search_Direction,
                 Blocks    => Blocks,
                 Turnouts  => Turnouts,
                 Success   => Success);
@@ -127,6 +133,7 @@ package body Layout.Search is
       Choice_Turnout: Turnout_Rec;
       Joint_Turnout_ID: Turnout_ID;
       Joint_Turnout_Obj: Turnout_Rec;
+      Search_Direction: Block_Polarity := Direction;
 
    begin
       if(Has_Joint(Turnout   =>  Choice_Turnout_ID,
@@ -158,11 +165,13 @@ package body Layout.Search is
                                      Direction => Turnout_Choice));
 
          -- Search with the block that follows the joint turnout for the given limb
+          if Next_Hall_Reversing then
+            Search_Direction := Opposite(Direction => Direction);
+         end if;
+
          Search(Start     => Next_Block_ID,
                 Finish    => Finish,
-                Direction => (if Next_Hall_Reversing
-                              then Opposite(Direction => Direction)
-                              else Direction),
+                Direction => Search_Direction,
                 Blocks    => Blocks,
                 Turnouts  => Turnouts,
                 Success   => Success);
@@ -193,11 +202,13 @@ package body Layout.Search is
                                      Direction => Turnout_Choice));
 
          -- Search with the block that follows the choice turnout for the given limb
+          if Next_Hall_Reversing then
+            Search_Direction := Opposite(Direction => Direction);
+         end if;
+
          Search(Start     => Next_Block_ID,
                 Finish    => Finish,
-                Direction => (if Next_Hall_Reversing
-                              then Opposite(Direction => Direction)
-                              else Direction),
+                Direction => Search_Direction,
                 Blocks    => Blocks,
                 Turnouts  => Turnouts,
                 Success   => Success);
