@@ -1,7 +1,6 @@
 -- Written by John McCormick, May 2002
 -- Rewritten by John McCormick, May 2008
 -- Modifed by Andrew Berns, October 2017
-
 with Blocks;
 with Display;
 with DoubleTalk;      use DoubleTalk.Phrase_Strings;
@@ -30,9 +29,9 @@ package body Trains is
                         Voice  => DoubleTalk.Paul);
    end Speak;
 
-    ----------------------------------------------------------------------------
-    -- Basic train information not needing mutex protection
-    ----------------------------------------------------------------------------
+   ----------------------------------------------------------------------------
+   -- Basic train information not needing mutex protection
+   ----------------------------------------------------------------------------
    type Hall_Rec is                  -- For tracking recently triggered Hall
       record                         -- sensors.  Needed when reversing a
          Valid : Boolean := False;   -- stopped train that has one or both of
@@ -222,8 +221,8 @@ package body Trains is
 
       -------------------------------------------
       entry Wait_For_Stop (Why : out Stop_Rec)
-            when Stopped is
-      -- Entry used to block stop handler task until the train stops
+        when Stopped is
+         -- Entry used to block stop handler task until the train stops
       begin
          Why := Why_Stopped;
       end Wait_For_Stop;
@@ -582,8 +581,8 @@ package body Trains is
          -- Get the block under the front of the train
          Front_Block := The_Blocks (Size);
          Blocks.Cab_Assigned (Block   => Front_Block,
-                             Cab      => Cab,
-                             Polarity => Polarity);
+                              Cab      => Cab,
+                              Polarity => Polarity);
          -- Get the next choice turnout from the map (Layout)
          Turnout := Layout.Choice_Turnout (Block     => Front_Block,
                                            Direction => Polarity);
@@ -596,7 +595,7 @@ package body Trains is
             No_Need  := False;
             -- Is this turnout adjacent to the front block
             Adjacent := Front_Block =
-                        Layout.Next_Block (Turnout, Layout.Common);
+              Layout.Next_Block (Turnout, Layout.Common);
 
             if Adjacent then
                -- Reserve the block in the new direction
@@ -610,12 +609,12 @@ package body Trains is
                   Status (Train).Stop (Train => Train,
                                        Block => New_Block);
                   Speak ("Waiting for block " &
-                         Layout.Block_ID'Image (New_Block));
+                           Layout.Block_ID'Image (New_Block));
                end if;
                -- Free the block in the old direction
                Old_Block := Layout.Next_Block
-                                      (Turnout => Turnout,
-                                       Limb    => Layout.Opposite (Direction));
+                 (Turnout => Turnout,
+                  Limb    => Layout.Opposite (Direction));
                Blocks.Release (Train => Train,
                                Block => Old_Block);
                -- If the train was waiting on the block in the old direction,
@@ -642,12 +641,12 @@ package body Trains is
                                    Block     : in Layout.Block_ID;
                                    Direction : in Layout.Block_Polarity) is
       use Layout;
-   -- Checks for and changes a force turnout on the Direction end of Block
-   --
-   -- Preconditions  : none
-   --
-   -- Postconditions : Any force turnout on the Direction end of Block is
-   --                  set to the correct direction
+      -- Checks for and changes a force turnout on the Direction end of Block
+      --
+      -- Preconditions  : none
+      --
+      -- Postconditions : Any force turnout on the Direction end of Block is
+      --                  set to the correct direction
 
       Turnout          : Turnout_ID;  -- Force turnout at end of Block
       Turn_Direction   : Turn_Choice; -- The required direction
@@ -663,8 +662,8 @@ package body Trains is
                                    Required_Direction => Turn_Direction);
          Turnouts.Set (Train, Turnout, Turn_Direction);
 
-      -- Second, check for an indirect force turnout - the second turnout
-      -- of a joint turnout
+         -- Second, check for an indirect force turnout - the second turnout
+         -- of a joint turnout
       elsif Layout.Terminated_By (Block, Direction) = Layout.A_Turnout then
          Choice_Turnout   := Layout.Adjacent_Turnout (Block, Direction);
          Choice_Direction := Turnouts.Direction_Of (Choice_Turnout);
@@ -683,12 +682,12 @@ package body Trains is
                                 Adjacent_Block    : in Layout.Block_ID;
                                 Adjacent_Polarity : in Layout.Block_Polarity) is
 
-   -- This procedure takes care of everything that needs to be done when the
-   -- front of a train passes over a Hall sensor.  This includes
-   --    1.  Powering the new block of track
-   --    2.  Reserving the next block of track
-   --    3.  Setting any force turnout to its required position
-   --    4.  Stopping a train because of a lost caboose
+      -- This procedure takes care of everything that needs to be done when the
+      -- front of a train passes over a Hall sensor.  This includes
+      --    1.  Powering the new block of track
+      --    2.  Reserving the next block of track
+      --    3.  Setting any force turnout to its required position
+      --    4.  Stopping a train because of a lost caboose
 
       Train    : Train_ID;
       Polarity : Layout.Block_Polarity;
@@ -728,7 +727,7 @@ package body Trains is
    exception
       when The_Error : others =>
          Display.Put_Error ("Exception " & Exception_Name (The_Error) & " has" &
-                            " occurred in Trains.Process_New_Block");
+                              " occurred in Trains.Process_New_Block");
          Speak ("An exception has occurred in Process New Block");
    end Process_New_Block;
 
@@ -800,7 +799,7 @@ package body Trains is
    exception
       when The_Error : others =>
          Display.Put_Error ("Exception " & Exception_Name (The_Error) & " has" &
-                      " occurred in Trains.Stop_Handler task");
+                              " occurred in Trains.Stop_Handler task");
          Speak ("A stop handler task has died");
    end Stop_Handler;
 
@@ -815,8 +814,88 @@ package body Trains is
 
    procedure Update_Location (Hall : in Layout.Hall_ID) is
 
+      -- Blocks adjacent to Hall
+      Block_A : Layout.Block_ID;
+      Block_B : Layout.Block_ID;
+      -- Cabs assigned to blocks adjacent to Hall
+      Cab_A : Cabs.Cab_ID;
+      Cab_B : Cabs.Cab_ID;
+      -- Polarities of the the Cabs assigned to blocks adjacent to Hall
+      Polarity_A : Layout.Block_Polarity;
+      Polarity_B : Layout.Block_Polarity;
+
    begin
-      null;
+      -- Get the blocks adjacent to Hall
+      Layout.Get_Adjacent_Blocks (Hall, Block_A, Block_B);
+      -- Get the cabs and polarities assigned to the blocks adjacent to Hall
+      Blocks.Cab_Assigned (Block    => Block_A,
+                           Cab      => Cab_A,
+                           Polarity => Polarity_A);
+      Blocks.Cab_Assigned (Block    => Block_B,
+                           Cab      => Cab_B,
+                           Polarity => Polarity_B);
+
+      if Cab_A = Cabs.Null_Cab and Cab_B = Cabs.Null_Cab then
+         -- Invalid Hall trigger
+         Speak ("Hall " & Layout.Hall_ID'Image (Hall) &
+                  " was triggered with no train near by");
+
+
+         --------------------------------------------------------------------------
+         -- If only one block is powered, this Hall is under the front of
+         -- the train.
+         --------------------------------------------------------------------------
+
+      elsif Cab_A = Cabs.Null_Cab then
+         -- Power Block_A, reserve the next block, and change any force turnout
+         Process_New_Block (Block             => Block_A,
+                            Hall              => Hall,
+                            Cab               => Cab_B,
+                            Adjacent_Block    => Block_B,
+                            Adjacent_Polarity => Polarity_B);
+
+      elsif Cab_B = Cabs.Null_Cab then
+         -- Power Block_B, reserve the next block, and change any force turnout
+         Process_New_Block (Block             => Block_B,
+                            Hall              => Hall,
+                            Cab               => Cab_A,
+                            Adjacent_Block    => Block_A,
+                            Adjacent_Polarity => Polarity_A);
+
+
+      else
+         --------------------------------------------------------------------------
+         -- Both blocks are powered by the same cab.
+         -- This Hall is under the rear of the train.
+         --------------------------------------------------------------------------
+
+         declare
+            Train : Train_ID;        -- The train that triggered Hall
+            Block : Layout.Block_ID; -- Block removed from rear of list
+         begin
+            -- Determine the train from the cab powering Block_A and Block_B
+            Train := Train_Powered_By (Cab_A);
+
+            -- Remove the block from the protected block list
+            -- (releasing reservation and connecting null cab)
+            Block_List (Train).Delete (Train, Block);
+
+            -- Update the most recent rear Hall sensor triggering
+            Train_Info (Train).Recent_Halls (Rear) := (Valid => True,
+                                                       Hall  => Hall);
+
+            -- Display the current list of blocks for this train
+            Display.Put (Train  => Train,
+                         Blocks => Block_List (Train).Powered_Blocks);
+         end;  -- declare block
+      end if;
+
+   exception
+      when The_Error : others =>
+         Display.Put_Error ("Exception " & Exception_Name (The_Error) & " has" &
+                              " occurred in Train.Operations.Update_Location");
+         Speak ("An exception has occurred in Update Location");
+
    end Update_Location;
 
    ----------------------------------------------------------------------------
@@ -830,11 +909,11 @@ package body Trains is
       Joint_Turnout : Layout.Turnout_ID;  -- Possible joint turnout to change
       Common_Limb   : Layout.Block_ID;    -- The common limb of the turnout
 
-   -- The logic to change a turnout is split between this procedure and the
-   -- protected Change procedure because the reservation logic must be done in
-   -- the protected object (to ensure the changes are atomic) but the actual
-   -- turnout changing cannot be done there since it involves a possibly
-   -- blocking rendezvous.
+      -- The logic to change a turnout is split between this procedure and the
+      -- protected Change procedure because the reservation logic must be done in
+      -- the protected object (to ensure the changes are atomic) but the actual
+      -- turnout changing cannot be done there since it involves a possibly
+      -- blocking rendezvous.
 
    begin
       -- Get the Turnout to change, whether it needs to be changed, whether it
@@ -862,7 +941,7 @@ package body Trains is
          end if;
 
       else -- Choice turnout is not on a block reserved by this train
-           -- Try to reserve the block connected to the turnout's common limb
+         -- Try to reserve the block connected to the turnout's common limb
          Common_Limb := Layout.Next_Block (Turnout, Layout.Common);
          Blocks.Reserve (Train   => Train,
                          Block   => Common_Limb,
@@ -881,10 +960,67 @@ package body Trains is
    ----------------------------------------------------------------------------
    procedure Set_Direction (Train     : in Train_ID;
                             Direction : in Direction_Type) is
+      -- Recent Hall triggerings for this train
+      Recent_Halls : Hall_Rec_Array;
+      -- Data needed to change possible force turnout
+      Front_Block    : Layout.Block_ID;       -- The block under front of train
+      Front_Polarity : Layout.Block_Polarity; -- Current polarity of Front_Block
+      Cab            : Cabs.Cab_ID;           -- Cab assigned to Front_Block
    begin
-      null;
-   end Set_Direction;
+      -- Ignore request if train is already traveling in Direction
+      if Direction /= Train_Info (Train).Direction then
+         -- Reverse block polarities and the order of blocks in
+         -- the protected list and change reservations
+         Block_List (Train).Reverse_Order (Train);
 
+
+         -- Take care of the rare case where a stopped train has one or both of
+         -- its magnets over a Hall sensor
+
+         -- Copy the recent Hall triggerings
+         Recent_Halls := Train_Info (Train).Recent_Halls;
+         -- Invalidate the train's recent Hall data so we won't reuse it
+         Train_Info (Train).Recent_Halls (Front).Valid := False;
+         Train_Info (Train).Recent_Halls (Rear).Valid := False;
+         -- See if a magnet is still over a recently triggered Front Hall sensor
+         if Recent_Halls (Front).Valid and then
+           Halls.Is_Triggered (Recent_Halls (Front).Hall) then
+            -- Update block powering and reservations as
+            -- though the Hall was just triggered
+            Update_Location (Recent_Halls (Front).Hall);
+         end if;
+         -- See if a magnet is still over a recently triggered Rear Hall sensor
+         -- making sure not to process the same Hall twice (should it be both
+         -- the most recently triggered Front and Rear)
+         if (Recent_Halls (Rear).Hall /= Recent_Halls (Front).Hall and
+               Recent_Halls (Rear).Valid) and then
+           Halls.Is_Triggered (Recent_Halls (Rear).Hall) then
+            -- Update block powering and reservations as
+            -- though the Hall was just triggered
+            Update_Location (Recent_Halls (Rear).Hall);
+         end if;
+
+
+
+         -- Handle possible force turnout
+         if not Status (Train).Stopped then
+            Front_Block := Block_List (Train).Front;
+            -- Get the polarity of Front_Block
+            Blocks.Cab_Assigned (Block    => Front_Block,
+                                 Cab      => Cab,
+                                 Polarity => Front_Polarity);
+            Change_Force_Turnout (Train, Front_Block, Front_Polarity);
+         end if;
+
+         -- Display the current list of blocks for this train
+         Display.Put (Train  => Train,
+                      Blocks => Block_List (Train).Powered_Blocks);
+         Train_Info (Train).Direction := Direction;
+         -- Update the display with the new direction
+         Display.Put (Train, Direction);
+      end if;
+   end Set_Direction;
+   
    ----------------------------------------------------------------------------
    procedure Set_Throttle (Train : in Train_ID;
                            Value : in Cabs.Percent) is
