@@ -11,13 +11,13 @@ package Hand_Controllers is
 	
 	
 	procedure Get_Digital_State(ID : in Controller_ID; 
-	                     red_button: out Button_state_Type;
-	                   black_button: out Button_state_Type; 
-			        dirction_switch: out Direction_Switch_Type;
-			            turn_switch: out Direction_Switch_Type);
+	                     Red_Button: out Button_State_Type;
+	                   Black_Button: out Button_State_Type; 
+			        Direction_Switch: out Direction_Switch_Type;
+			            Turn_Switch: out Turn_Switch);
 					  
 					  
-	procedure Get_Analog_State(ID : in Controller_ID; Controller_Voltage : out Throttle_Level);
+	procedure Get_Analog_State(ID : in Controller_ID; Throttle : out Throttle_Level);
 	                         
 
 							 
