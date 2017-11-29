@@ -29,44 +29,6 @@ package body Motors is
    function To_Bit_Array is new Ada.Unchecked_Conversion(Source => Port_IO.Byte,
                                                          Target => Bit_Array);
    
-   procedure Set (Motor     : in Layout.Turnout_ID;
-                  Direction : in Layout.Turn_Choice) is
-      
-      -- Local Variables
-      Board_Base_Address  : Interfaces.Unsigned_16;
-      Turnout_Address: Port_IO.Address_Range;
-      Bit: Integer;
-      
-   begin
-      if Integer(Motor) > 24 then
-         Board_Base_Address := 16#228#;
-      else
-         Board_Base_Address := 16#220#;
-      end if;
-      
-      -- Determine port address for the given turnout
-      if Integer(Motor) < 9 then
-         Turnout_Address := Port_IO.Address_Range(Board_Base_Address + 4);-- Read port A high. Use read byte?
-      elsif Integer(Motor) < 17 then
-         Turnout_Address := Port_IO.Address_Range(Board_Base_Address + 6); -- Read port C high. Use read byte?
-      else
-         Turnout_Address := Port_IO.Address_Range(Board_Base_Address + 1); -- Set port B low. Use read byte?
-      end if;
-      
-      -- Determine bit
-      Bit := (Integer(Motor) - 1) mod 8;
-      
-     
-      -- write the desird position to the specified bit. Do this by converting 
-      -- ReadByte return value into a BitArray and flipping index Bit.
-      -- Should Left = 1 or Right = 1? Does it matter?
-      
-      
-      -- write the byte back to where it came from. Use write byte?
-   
-   end Set;
-   
-   
    -- Protected object that handles the reading and writing of Bytes.
    protected type Read_Write_Manager is
       procedure Set_Turnout_Position_At_Address_Location(Address   : in Port_IO.Address_Range;
@@ -92,14 +54,81 @@ package body Motors is
       
    end Read_Write_Manager;
    
-   -- Do Next.
-   function In_Position (Motor : in Layout.Turnout_ID) return Boolean is
+   
+   procedure Set (Motor     : in Layout.Turnout_ID;
+                  Direction : in Layout.Turn_Choice) is
+      
+      -- Local Variables
+      Board_Base_Address  : Interfaces.Unsigned_16;
+      Turnout_Address: Port_IO.Address_Range;
+      Bit: Integer;
+      Read_Write_Manager_Var: Read_Write_Manager;
+      
    begin
-      return True;
+      if Integer(Motor) > 24 then
+         Board_Base_Address := 16#228#;
+      else
+         Board_Base_Address := 16#220#;
+      end if;
+      
+      -- Determine port address for the given turnout
+      if Integer(Motor) < 9 then
+         -- Read port A high
+         Turnout_Address := Port_IO.Address_Range(Board_Base_Address + 4);
+      elsif Integer(Motor) < 17 then
+         -- Read port C high
+         Turnout_Address := Port_IO.Address_Range(Board_Base_Address + 6);
+      else
+         -- Read port B low
+         Turnout_Address := Port_IO.Address_Range(Board_Base_Address + 1);
+      end if;
+      
+      -- Determine bit
+      Bit := (Integer(Motor) - 1) mod 8;
+      
+      -- Use protected type to read bit, set direction, and write back out
+      Read_Write_Manager_Var.Set_Turnout_Position_At_Address_Location(Address   => Turnout_Address,
+                                                                      Bit_Index => Bit,
+                                                                      Direction => Direction);
+   end Set;
+   
+   
+   function In_Position (Motor : in Layout.Turnout_ID) return Boolean is
+      -- Local Variables
+      Board_Base_Address  : Interfaces.Unsigned_16;
+      Turnout_Address: Port_IO.Address_Range;
+      Bit_Index: Integer;
+      Byte_Returned: Port_IO.Byte;
+      Converted_Bit_Array: Bit_Array;
+      
+   begin
+      if Integer(Motor) > 24 then
+         Board_Base_Address := 16#228#;
+      else
+         Board_Base_Address := 16#220#;
+      end if;
+      
+      -- Determine port address for the given turnout
+      if Integer(Motor) < 9 then
+         -- Read port B high
+         Turnout_Address := Port_IO.Address_Range(Board_Base_Address + 5);
+      elsif Integer(Motor) < 17 then
+         -- Read port A low
+         Turnout_Address := Port_IO.Address_Range(Board_Base_Address);
+      else
+         -- Read port C low
+         Turnout_Address := Port_IO.Address_Range(Board_Base_Address + 2);
+      end if;
+      
+      -- Determine bit
+      Bit_Index := (Integer(Motor) - 1) mod 8;
+      
+      -- Read Byte and convert to Bit array
+      Byte_Returned := Port_IO.In_Byte(Address => Turnout_Address);
+      Converted_Bit_Array := To_Bit_Array(Byte_Returned);
+      
+      -- Determine if turnout is in position by returning the correct bit
+      return Converted_Bit_Array(Bit_Index);
    end In_Position;
    
-   
-   
-   
-
 end Motors;
