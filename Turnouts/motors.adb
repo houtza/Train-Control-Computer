@@ -30,7 +30,7 @@ package body Motors is
                                                          Target => Bit_Array);
    
    -- Protected object that handles the reading and writing of Bytes.
-   protected type Read_Write_Manager is
+   protected Read_Write_Manager is
       procedure Set_Turnout_Position_At_Address_Location(Address   : in Port_IO.Address_Range;
                                                          Bit_Index : in Integer;
                                                          Direction : in Layout.Turn_Choice);
@@ -61,21 +61,22 @@ package body Motors is
       -- Local Variables
       Board_Base_Address  : Interfaces.Unsigned_16;
       Turnout_Address: Port_IO.Address_Range;
+      Adjusted_Turnout_ID: Integer := Integer(Motor);
       Bit: Integer;
-      Read_Write_Manager_Var: Read_Write_Manager;
       
    begin
-      if Integer(Motor) > 24 then
+      if Adjusted_Turnout_ID > 24 then
+         Adjusted_Turnout_ID := Adjusted_Turnout_ID - 24;
          Board_Base_Address := 16#228#;
       else
          Board_Base_Address := 16#220#;
       end if;
       
       -- Determine port address for the given turnout
-      if Integer(Motor) < 9 then
+      if Adjusted_Turnout_ID < 9 then
          -- Read port A high
          Turnout_Address := Port_IO.Address_Range(Board_Base_Address + 4);
-      elsif Integer(Motor) < 17 then
+      elsif Adjusted_Turnout_ID < 17 then
          -- Read port C high
          Turnout_Address := Port_IO.Address_Range(Board_Base_Address + 6);
       else
@@ -84,10 +85,10 @@ package body Motors is
       end if;
       
       -- Determine bit
-      Bit := (Integer(Motor) - 1) mod 8;
+      Bit := (Adjusted_Turnout_ID - 1) mod 8;
       
       -- Use protected type to read bit, set direction, and write back out
-      Read_Write_Manager_Var.Set_Turnout_Position_At_Address_Location(Address   => Turnout_Address,
+      Read_Write_Manager.Set_Turnout_Position_At_Address_Location(Address   => Turnout_Address,
                                                                       Bit_Index => Bit,
                                                                       Direction => Direction);
    end Set;
@@ -97,22 +98,24 @@ package body Motors is
       -- Local Variables
       Board_Base_Address  : Interfaces.Unsigned_16;
       Turnout_Address: Port_IO.Address_Range;
+      Adjusted_Turnout_ID: Integer := Integer(Motor);
       Bit_Index: Integer;
       Byte_Returned: Port_IO.Byte;
       Converted_Bit_Array: Bit_Array;
       
    begin
-      if Integer(Motor) > 24 then
+      if  Adjusted_Turnout_ID > 24 then
+         Adjusted_Turnout_ID :=  Adjusted_Turnout_ID - 24;
          Board_Base_Address := 16#228#;
       else
          Board_Base_Address := 16#220#;
       end if;
       
       -- Determine port address for the given turnout
-      if Integer(Motor) < 9 then
+      if Adjusted_Turnout_ID < 9 then
          -- Read port B high
          Turnout_Address := Port_IO.Address_Range(Board_Base_Address + 5);
-      elsif Integer(Motor) < 17 then
+      elsif Adjusted_Turnout_ID < 17 then
          -- Read port A low
          Turnout_Address := Port_IO.Address_Range(Board_Base_Address);
       else
@@ -121,7 +124,7 @@ package body Motors is
       end if;
       
       -- Determine bit
-      Bit_Index := (Integer(Motor) - 1) mod 8;
+      Bit_Index := (Adjusted_Turnout_ID - 1) mod 8;
       
       -- Read Byte and convert to Bit array
       Byte_Returned := Port_IO.In_Byte(Address => Turnout_Address);
