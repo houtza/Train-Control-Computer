@@ -5,14 +5,14 @@ procedure Hand_Controller_Test is
    use type Hand_Controllers.Controller_ID;
    use type Hand_Controllers.Button_State_Type;
    use type Hand_Controllers.Direction_Switch_Type;
-   use type Hand_Controllers.Turn_Switch;
+   use type Hand_Controllers.Turn_Switch_Type;
    use type Hand_Controllers.Throttle_Level;
 
    -- Local Variables
    Red_Button : Hand_Controllers.Button_State_Type;
    Black_Button : Hand_Controllers.Button_State_Type;
    Direction_Switch: Hand_Controllers.Direction_Switch_Type;
-   Turn_Switch: Hand_Controllers.Turn_Switch;
+   Turn_Switch: Hand_Controllers.Turn_Switch_Type;
    Controller_Throttle: Hand_Controllers.Throttle_Level;
 begin
    loop
@@ -25,11 +25,11 @@ begin
 
 
          -- Get data for controller
-         Hand_Controllers.Get_Digital_State(ID              => Controller,
-                                            red_button      => Red_Button,
-                                            black_button    => Black_Button,
-                                            dirction_switch => Direction_Switch,
-                                            turn_switch     => Turn_Switch);
+         Hand_Controllers.Get_Digital_State(ID               => Controller,
+                                            Red_Button       => Red_Button,
+                                            Black_Button     => Black_Button,
+                                            Direction_Switch => Direction_Switch,
+                                            Turn_Switch      => Turn_Switch);
 
          Hand_Controllers.Get_Analog_State(ID       => Controller,
                                            Throttle => Controller_Throttle);
@@ -41,7 +41,7 @@ begin
 
          Ada.Text_IO.Put_Line (Item => "Direction switch state: " & Hand_Controllers.Direction_Switch_Type'Image (Direction_Switch));
 
-         Ada.Text_IO.Put_Line (Item => "Turn switch state: " &  Hand_Controllers.Turn_Switch'Image (Turn_Switch));
+         Ada.Text_IO.Put_Line (Item => "Turn switch state: " &  Hand_Controllers.Turn_Switch_Type'Image (Turn_Switch));
 
          Ada.Text_IO.Put_Line (Item => "Throttle Level: " & Hand_Controllers.Throttle_Level'Image (Controller_Throttle));
 
