@@ -20,26 +20,29 @@ package body Hand_Controller is
 
     for HC_Record'Size use 8;
 
-    type Eight_Bit_Value is mod 2**8;
-
     function Byte_To_HC_Record is new Ada.Unchecked_Conversion(Source => Port_IO.Byte,
             Target => HC_Record);
 
     procedure Get_Digital_State(ID : in Controller_ID;
-                                red_button : out Button_State_Type;
-                                black_button : out Button_State_Type;
-                                dirction_switch : out Direction_Switch_Type;
-                                turn_switch : out Direction_Switch_Type) is
-    Parameters_In : HC_Record;
-    New_Num : Eight_Bit_Value;
+                                Red_Button : out Button_State_Type;
+                                Black_Button : out Button_State_Type;
+                                Dirction_Switch : out Direction_Switch_Type;
+                                Turn_Switch2 : out Direction_Switch_Type) is
+    Parameters_In : Port_IO.In_Byte;
+    New_Num : HC_Record;
     begin 
-        Parameters_In.Red := red_button;
-        Parameters_In.Black := black_button;
-        Parameters_In.Direct_Switch := dirction_switch;
-        Parameters_In.Turn_Switch := turn_switch;
+        Parameters_In.Red := Red_Button;
+        Parameters_In.Black := Black_Button;
+        Parameters_In.Direct_Switch := Dirction_Switch;
+        Parameters_In.Turn_Switch := Turn_Switch2;
 
         New_Num := Byte_To_HC_Record(Parameters_In);
-        Ada.Text_IO.Put_Line(Item => Eight_Bit_Value'Image(New_Num));
+        
+        Red_Button := Parameters_In.Red;
+        Black_Button := Parameters_In.Black
+        Dirction_Switch := Parameters_In.Direct_Switch;
+        Turn_Switch2 := Parameters_In.Turn_Switch;
+        
     end Get_Digital_State;
 
 
