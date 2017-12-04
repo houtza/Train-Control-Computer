@@ -8,12 +8,12 @@ project Template is
    case Target is
 
       when "MaRTE" =>
-         for Source_Dirs use (".", "Layout", "Port_IO");
-         for Main use ("helloworld.adb", "search_test.adb");
+         for Source_Dirs use (".", "Layout", "Port_IO", "Turnouts");
+         for Main use ("helloworld.adb", "motors_test.adb", "search_test.adb");
 
       when "Native" =>
-         for Source_Dirs use (".", "Layout", "Port_IO", "hand_controller", "Turnouts");
-         for Main use ("helloworld.adb", "search_test.adb");
+         for Source_Dirs use (".", "Layout", "Port_IO", "Turnouts");
+         for Main use ("helloworld.adb", "motors_test.adb", "search_test.adb");
    end case;
 
    package Pretty_Printer is
