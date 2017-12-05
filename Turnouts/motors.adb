@@ -1,7 +1,6 @@
-with Motors;
 with Port_IO;
 with Ada.Unchecked_Conversion;
-with Interfaces;
+
 package body Motors is
    use type Layout.Turnout_ID;
    use type Layout.Turn_Choice;
@@ -20,33 +19,37 @@ package body Motors is
    for Bit_Array'Size use 8;
 
    -- Conversion functions
-   function To_Turnout_Choice_Array is new Ada.Unchecked_Conversion(Source => Port_IO.Byte,
-                                                                    Target => Turnout_Choice_Array);
+   function To_Turnout_Choice_Array is
+     new Ada.Unchecked_Conversion(Source => Port_IO.Byte,
+                                  Target => Turnout_Choice_Array);
 
-   function To_Byte is new Ada.Unchecked_Conversion(Source => Turnout_Choice_Array,
-                                                    Target => Port_IO.Byte);
+   function To_Byte is
+     new Ada.Unchecked_Conversion(Source => Turnout_Choice_Array,
+                                  Target => Port_IO.Byte);
 
-   function To_Bit_Array is new Ada.Unchecked_Conversion(Source => Port_IO.Byte,
-                                                         Target => Bit_Array);
+   function To_Bit_Array is
+     new Ada.Unchecked_Conversion(Source => Port_IO.Byte,
+                                  Target => Bit_Array);
 
    -- Protected object that handles the reading and writing of Bytes.
    protected Read_Write_Manager is
-      procedure Set_Turnout_Position_At_Address_Location(Address   : in Port_IO.Address_Range;
-                                                         Bit_Index : in Integer;
-                                                         Direction : in Layout.Turn_Choice);
+      procedure Set_Turnout_Position (Address   : in Port_IO.Address_Range;
+                                      Bit_Index : in Integer;
+                                      Direction : in Layout.Turn_Choice);
    end Read_Write_Manager;
 
    protected body Read_Write_Manager is
-      procedure Set_Turnout_Position_At_Address_Location(Address   : in Port_IO.Address_Range;
-                                                         Bit_Index : in Integer;
-                                                         Direction : in Layout.Turn_Choice) is
+      procedure Set_Turnout_Position(Address   : in Port_IO.Address_Range;
+                                     Bit_Index : in Integer;
+                                     Direction : in Layout.Turn_Choice) is
          -- Local Variables
          Byte_Returned: Port_IO.Byte;
          Converted_Turnout_Choice_Array: Turnout_Choice_Array;
       begin
          -- Read Byte, set direction at bit index, write back out
          Byte_Returned := Port_IO.In_Byte(Address => Address);
-         Converted_Turnout_Choice_Array := To_Turnout_Choice_Array(Byte_Returned);
+         Converted_Turnout_Choice_Array :=
+           To_Turnout_Choice_Array(Byte_Returned);
          Converted_Turnout_Choice_Array(Bit_Index) := Direction;
          Port_IO.Out_Byte(Address => Address,
                           Data    => To_Byte(Converted_Turnout_Choice_Array));
@@ -88,9 +91,9 @@ package body Motors is
       Bit := (Adjusted_Turnout_ID - 1) mod 8;
 
       -- Use protected type to read bit, set direction, and write back out
-      Read_Write_Manager.Set_Turnout_Position_At_Address_Location(Address   => Turnout_Address,
-                                                                      Bit_Index => Bit,
-                                                                      Direction => Direction);
+      Read_Write_Manager.Set_Turnout_Position(Address   => Turnout_Address,
+                                              Bit_Index => Bit,
+                                              Direction => Direction);
    end Set;
 
 
@@ -134,8 +137,11 @@ package body Motors is
       return Converted_Bit_Array(Bit_Index);
    end In_Position;
 
-   Board_Base_Adress: array (0..1) of Port_IO.Address_Range := (16#228#, 16#220#);
-   Port_Offset_Array: array (0..2) of Port_IO.Address_Range := (1, 4, 6);
+   Board_Base_Adress: array (0..1) of Port_IO.Address_Range
+     := (16#228#, 16#220#);
+   Port_Offset_Array: array (0..2) of Port_IO.Address_Range
+     := (1, 4, 6);
+
 begin
    -- Setting output ports
    for Board_Index in Board_Base_Adress'Range loop
