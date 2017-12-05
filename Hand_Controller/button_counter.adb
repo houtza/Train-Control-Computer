@@ -19,15 +19,15 @@ procedure Button_Counter is
    Red_Button : Hand_Controllers.Button_State_Type;
    Black_Button : Hand_Controllers.Button_State_Type;
    Direction_Switch: Hand_Controllers.Direction_Switch_Type;
-   Turn_Switch: Hand_Controllers.Direction_Switch_Type;
+   Turn_Switch: Hand_Controllers.Turn_Switch_Type;
 
 begin
    loop
-      Hand_Controllers.Get_Digital_State(ID             => Hand_Controllers.B,
-                                        red_button      => Red_Button,
-                                        black_button    => Black_Button,
-                                        dirction_switch => Direction_Switch,
-                                        turn_switch     => Turn_Switch);
+      Hand_Controllers.Get_Digital_State(ID               => Hand_Controllers.B,
+                                         Red_Button       => Red_Button,
+                                         Black_Button     => Black_Button,
+                                         Direction_Switch => Direction_Switch,
+                                         Turn_Switch      => Turn_Switch);
 
       -- Check if the red button has been pressed.
       if Previous_Red_Button = Hand_Controllers.Up
