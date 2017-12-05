@@ -7,7 +7,7 @@ package body Motors is
    use type Layout.Turn_Choice;
    use type Port_IO.Address_Range;
    use type Port_IO.Byte;
-   use type Interfaces.Unsigned_16;
+   use type Port_IO.Address_Range;
    
    -- Array of turn_choice's to represent a byte in memory
    type Turnout_Choice_Array is array (0 .. 7) of Layout.Turn_Choice;
@@ -59,7 +59,7 @@ package body Motors is
                   Direction : in Layout.Turn_Choice) is
       
       -- Local Variables
-      Board_Base_Address  : Interfaces.Unsigned_16;
+      Board_Base_Address  : Port_IO.Address_Range;
       Turnout_Address: Port_IO.Address_Range;
       Adjusted_Turnout_ID: Integer := Integer(Motor);
       Bit: Integer;
@@ -67,10 +67,17 @@ package body Motors is
    begin
       if Adjusted_Turnout_ID > 24 then
          Adjusted_Turnout_ID := Adjusted_Turnout_ID - 24;
-         Board_Base_Address := 16#228#;
+         Board_Base_Address :=  Port_IO.Address_Range(16#228#);
       else
-         Board_Base_Address := 16#220#;
+         Board_Base_Address := Port_IO.Address_Range(16#220#);
       end if;
+      
+      -- Setting output ports
+      Port_IO.Out_Byte(Address => Port_IO.Address_Range(Board_Base_Address) + 3,
+                       Data    => Port_IO.Byte(16#91#));
+      
+      Port_IO.Out_Byte(Address => Port_IO.Address_Range(Board_Base_Address) + 7,
+                       Data    => Port_IO.Byte(16#83#));
       
       -- Determine port address for the given turnout
       if Adjusted_Turnout_ID < 9 then
@@ -96,7 +103,7 @@ package body Motors is
    
    function In_Position (Motor : in Layout.Turnout_ID) return Boolean is
       -- Local Variables
-      Board_Base_Address  : Interfaces.Unsigned_16;
+      Board_Base_Address  : Port_IO.Address_Range;
       Turnout_Address: Port_IO.Address_Range;
       Adjusted_Turnout_ID: Integer := Integer(Motor);
       Bit_Index: Integer;
@@ -106,9 +113,9 @@ package body Motors is
    begin
       if  Adjusted_Turnout_ID > 24 then
          Adjusted_Turnout_ID :=  Adjusted_Turnout_ID - 24;
-         Board_Base_Address := 16#228#;
+         Board_Base_Address := Port_IO.Address_Range(16#228#);
       else
-         Board_Base_Address := 16#220#;
+         Board_Base_Address := Port_IO.Address_Range(16#220#);
       end if;
       
       -- Determine port address for the given turnout
