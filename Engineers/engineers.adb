@@ -1,22 +1,44 @@
+with Trains;
+with Ada.Real_Time;
+with Hand_Controllers;
+
 package body Engineers is
-   -- HINT: You will find it helpful to create an 'Engineer' task type which
-   -- includes a rendezvous for enabling and disabling, as well as a selective
-   -- accept that reads from the hand controller after a fixed polling rate.
-   -- The engineer can then pass on any changes in state to the Train it
-   -- controls.
-   
-   -----------------------------------------------------------------------------
-   procedure Enable (Engineer   : in Engineer_ID;
-                     Train      : in Trains.Train_ID;
-                     Controller : in Hand_Controllers.Hand_Controller_ID) is
-   begin
-      null;
-   end Enable;
+    task Engineer;
 
-   -----------------------------------------------------------------------------
-   procedure Disable (Engineer : in Engineer_ID) is
-   begin
-      null;
-   end Disable;
+    task Engineer is 
+        entry Do_Enable;
+        entry Do_Disable;
+    end Engineer;
 
+    task body Engineer is
+    begin 
+      
+        delay 5.0;
+        
+        select
+            accept Do_Enable()do 
+                Enable();
+            end Do_Enable;
+        or 
+            accept Do_Disable()do
+                Disable();
+            end Do_Disable;
+        or
+            delay 5.0;
+            Controller.getStatus();
+            if(Controller.status == newStatus)
+                Train := Controller.status;
+    end Engineer;
+
+    procedure Enable (Engineer : in Engineer_ID;
+                    Train : Trains.Train_ID;
+                    Controller : in Hand_Controllers.Hand_Controller_ID)is
+    begin
+        null;
+    end Enable;
+
+    procedure Disable (Engineers : in Engineer_ID) is
+    begin
+        null;
+    end Disable;
 end Engineers;
