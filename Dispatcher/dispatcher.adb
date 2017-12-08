@@ -13,12 +13,14 @@ with Command;              use Command;
 with Display;
 with DoubleTalk;           use DoubleTalk;  use DoubleTalk.Phrase_Strings;
 with Engineers;
+with Engineers.Operations;
 with Halls;
 with Hand_Controllers;
 with Layout;
 with Layout.Search;
 with Locomotives;          use Locomotives;
 with Trains;
+with Trains.Operations;
 with Turnouts;
 
 procedure Dispatcher is
@@ -357,15 +359,15 @@ procedure Dispatcher is
    begin
       for Train in 1 .. Trains.Train_ID (Num_Trains) loop
          Display.Put (Train => Train,
-                      Name  => Trains.Loco_Name (Train));
+                      Name  => Trains.Operations.Loco_Name (Train));
          Display.Put (Train     => Train,
-                      Direction => Trains.Direction (Train));
+                      Direction => Trains.Operations.Direction (Train));
          Display.Put (Train    => Train,
                       Throttle => 0);
          Display.Put (Train  => Train,
-                      Status => Trains.Why_Stopped (Train));
+                      Status => Trains.Operations.Why_Stopped (Train));
          Display.Put (Train  => Train,
-                      Blocks => Trains.Powered_Blocks (Train));
+                      Blocks => Trains.Operations.Powered_Blocks (Train));
       end loop;
    end Display_Trains;
 
