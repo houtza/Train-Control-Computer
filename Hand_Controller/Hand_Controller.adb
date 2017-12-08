@@ -28,11 +28,16 @@ package body Hand_Controller is
                                 Red_Button : out Button_State_Type;
                                 Black_Button : out Button_State_Type;
                                 Dirction_Switch : out Direction_Switch_Type;
-                                Turn_Switch : out Turn_Switch_Type) is
-    Parameters_In : Controller_ID.ID;
-    New_Num : HC_Record;
+                                T_Switch : out Turn_Switch_Type) is
+    
+    
     begin 
-        New_Num := Byte_To_HC_Record(Parameters_In);
+        New_Num : Byte_To_HC_Record(Port_IO.In_Byte (16#24B# + Port_IO.Address_Range(ID)));
+
+        Red_Button := New_Num.Red;
+        Black_Button := New_Num.Black;
+        Dirction_Switch := New_Num.Direct_Switch;
+        T_Switch := New_Num.Turn_Switch;
     end Get_Digital_State;
 
 
