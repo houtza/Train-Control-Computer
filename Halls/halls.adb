@@ -5,6 +5,7 @@ with MaRTE_Hardware_Interrupts;
 with Port_IO;
 with MaRTE.Integer_Types; use MaRTE.Integer_Types;  -- for subtype int
 with MaRTE.Direct_IO;  use MaRTE.Direct_IO;
+with Layout; use Layout;
 
 package body Halls is
 
