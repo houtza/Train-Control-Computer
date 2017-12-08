@@ -391,19 +391,19 @@ procedure Dispatcher is
          -- Convert a train number into a controller letter A=1, B=2, C=3
          Controller := Hand_Controllers.Hand_Controller_ID'Val (Train - 1);
          Engineer   := Engineers.Engineer_ID (Train);
-         Engineers.Enable (Engineer   => Engineer,
+         Engineers.Operations.Enable (Engineer   => Engineer,
                                       Train      => Trains.Train_ID (Train),
                                       Controller => Controller);
       end loop;
 
       -- Set up the turnout callbacks
-      Turnouts.Set_Failure_Callback  (To => Trains.Stop'Access);
-      Turnouts.Set_Recovery_Callback (To => Trains.Start'Access);
+      Turnouts.Set_Failure_Callback  (To => Trains.Operations.Stop'Access);
+      Turnouts.Set_Recovery_Callback (To => Trains.Operations.Start'Access);
       Turnouts.Set_Change_Callback   (To => Display.Put'Access);
 
       -- Enable Hall sensors
       Halls.Initialize;
-      Halls.Enable (Trains.Update_Location'Access);
+      Halls.Enable (Trains.Operations.Update_Location'Access);
    end Enable_Session;
 
    ------------------------------------------------------------------------
@@ -413,7 +413,7 @@ procedure Dispatcher is
    begin
       -- Stop all trains
       for Train in 1 .. Trains.Train_ID (Num_Trains) loop
-         Trains.Stop (Train);
+         Trains.Operations.Stop (Train);
       end loop;
 
       -- Disable the display
@@ -424,7 +424,7 @@ procedure Dispatcher is
 
       -- Disable Engineer tasks
       for Engineer in 1 .. Engineers.Engineer_ID (Num_Trains) loop
-         Engineers.Disable (Engineer);
+         Engineers.Operations.Disable (Engineer);
       end loop;
 
    end Disable_Session;
@@ -708,7 +708,7 @@ procedure Dispatcher is
                      My_Cab := Cabs.Control_Cab_ID (Train);
                      My_ID  := Trains.Train_ID (Train);
 
-                     Trains.Initialize_Train
+                     Trains.Operations.Initialize_Train
                        (Train          => My_ID,
                         Loco           => My_Loco,
                         Blocks_Under   => My_Blocks,
@@ -847,18 +847,18 @@ procedure Dispatcher is
          case The_Command.Which is
             when Stop_All =>
                for Train in 1 .. Trains.Train_ID (Num_Trains) loop
-                  Trains.Stop (Train);
+                  Trains.Operations.Stop (Train);
                end loop;
             when Stop =>
                if Positive (The_Command.Train) <= Num_Trains then
-                  Trains.Stop (The_Command.Train);
+                  Trains.Operations.Stop (The_Command.Train);
                else
                   Speak ("Invalid command");
                end if;
 
             when Go =>
                if Positive (The_Command.Train) <= Num_Trains then
-                  Trains.Start (The_Command.Train);
+                  Trains.Operations.Start (The_Command.Train);
                else
                   Speak ("Invalid command");
                end if;
