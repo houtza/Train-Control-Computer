@@ -4,7 +4,8 @@
 -- triggered. The implementation uses interrupts with IRQ 5 and IRQ 7.
 --
 -- Written by John McCormick, March 2002; Modified April 2008
-with Layout;
+with Layout; use Layout;
+
 package Halls is
    type Callback_Ptr is access procedure (Hall : in Layout.Hall_ID);
 
