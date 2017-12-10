@@ -1,7 +1,7 @@
 with Port_IO;
 with Ada.Unchecked_Conversion;
 
-package body Hand_Controller is
+package body Hand_Controllers is
     type HC_Record is
         record 
             Red : Button_State_Type;
@@ -18,30 +18,29 @@ package body Hand_Controller is
             Turn_Switch at 3 range 3 .. 4;
         end record;
 
-    for HC_Record use
-        function
-            function Byte_To_HC_Record is new Ada.Unchecked_Conversion(Source => Port_IO.In_Byte,
+        for HC_Record'Size use 8;
+
+            function Byte_To_HC_Record is new Ada.Unchecked_Conversion(Source => Port_IO.Byte,
                     Target => HC_Record);
-        end function;
 
     procedure Get_Digital_State(ID : in Controller_ID;
                                 Red_Button : out Button_State_Type;
                                 Black_Button : out Button_State_Type;
                                 Dirction_Switch : out Direction_Switch_Type;
                                 T_Switch : out Turn_Switch_Type) is
-    
-    
+        Controller_Status : HC_Record;     
     begin 
-        New_Num : Byte_To_HC_Record(Port_IO.In_Byte (16#24B# + Port_IO.Address_Range(ID)));
+        Controller_Status := Byte_To_HC_Record( 
+            Port_IO.In_Byte ( Port_IO.Address_Range(ID) ) );
 
-        Red_Button := New_Num.Red;
-        Black_Button := New_Num.Black;
-        Dirction_Switch := New_Num.Direct_Switch;
-        T_Switch := New_Num.Turn_Switch;
+        Red_Button := Controller_Status.Red;
+        Black_Button := Controller_Status.Black;
+        Dirction_Switch := Controller_Status.Direct_Switch;
+        T_Switch := Controller_Status.Turn_Switch;
     end Get_Digital_State;
 
-
-    procedure Get_Analog_State(ID : in Controller_ID; Controller_Voltage : out Throttle_Level) is
+    procedure Get_Analog_State(ID : in Controller_ID; 
+                               Controller_Voltage : out Throttle_Level) is
     begin
         Controller_Voltage := 0;
     end Get_Analog_State;				 
