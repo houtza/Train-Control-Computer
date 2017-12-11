@@ -42,7 +42,17 @@ package body Hand_Controllers is
     procedure Get_Analog_State(ID : in Controller_ID; 
                                Controller_Voltage : out Throttle_Level) is
     begin
-        Controller_Voltage := 0;
+    -- Read in the voltage from ADC
+    -- if Voltage < 0: set it to 0
+    -- Controller_Voltage := Throttle_Level (Voltage * 20.0);
+        Voltage := Port_IO.In_Byte (Port_IO.Address_Range(ID));
+        if Voltage < 0 then 
+            Controller_Voltage := 0;
+        end if;
+        else
+            Controller_Voltage := Throttle_Level (Voltage * 20.0);
+        end else;
+
     end Get_Analog_State;				 
 end Hand_Controllers;            
     
