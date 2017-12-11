@@ -7,7 +7,7 @@ package DAC is
    -- There are 6 channels on the board
    type Channel_Range is range 0 .. 5;
 
-   -- The ouput range of the digital to analog converters
+   -- The output range of the digital to analog converters
    type Voltage_Range is delta 2.0 ** (-12) range -5.0 .. 5.0;
 
    -----------------------------------------------------------------------------
