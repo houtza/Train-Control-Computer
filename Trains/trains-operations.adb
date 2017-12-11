@@ -13,7 +13,7 @@ pragma Elaborate_All (Blocks);
 pragma Elaborate_All (Display);
 pragma Elaborate_All (DoubleTalk);
 
-package body Trains is
+package body Trains.Operations is
 
    use type Cabs.Cab_ID;
    use type Layout.Block_ID;
@@ -1209,4 +1209,4 @@ begin
       Block_List (Train).Set_ID (Train);
       Stopped_Train_Task (Train).Set_ID (Train);
    end loop;
-end Trains;
+end Trains.Operations;
