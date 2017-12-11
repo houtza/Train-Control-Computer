@@ -12,12 +12,14 @@ with Cabs;
 with Command;              use Command;
 with Display;
 with DoubleTalk;           use DoubleTalk;  use DoubleTalk.Phrase_Strings;
+with Engineers;
 with Engineers.Operations;
 with Halls;
 with Hand_Controllers;
 with Layout;
 with Layout.Search;
 with Locomotives;          use Locomotives;
+with Trains;
 with Trains.Operations;
 with Turnouts;
 

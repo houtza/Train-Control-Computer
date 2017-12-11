@@ -1,6 +1,3 @@
-with Trains;
-with Hand_Controllers;
-
 package Engineers.Operations is
    -----------------------------------------------------------------------------
    -- Assigns a train and a hand controller to an engineer
