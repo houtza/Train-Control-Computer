@@ -2,7 +2,7 @@ with Trains;
 with Ada.Real_Time;
 with Hand_Controllers;
 
-package body Engineers is
+package body Engineers.Operations is
 -- HINT: You will find it helpful to create an 'Engineer' task type which
    -- includes a rendezvous for enabling and disabling, as well as a selective
    -- accept that reads from the hand controller after a fixed polling rate.
@@ -106,4 +106,4 @@ package body Engineers is
     begin
         Engineer_Task(Engineer).Disable;
     end Disable;
-end Engineers;
+end Engineers.Operations;
