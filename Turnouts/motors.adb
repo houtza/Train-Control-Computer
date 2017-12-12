@@ -53,7 +53,7 @@ package body Motors is
          Converted_Turnout_Choice_Array(Bit_Index) := Direction;
          Port_IO.Out_Byte(Address => Address,
                           Data    => To_Byte(Converted_Turnout_Choice_Array));
-      end Set_Turnout_Position_At_Address_Location;
+      end Set_Turnout_Position;
 
    end Read_Write_Manager;
 

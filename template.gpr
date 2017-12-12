@@ -8,11 +8,11 @@ project Template is
    case Target is
 
       when "MaRTE" =>
-         for Source_Dirs use (".", "Layout", "Port_IO", "Turnouts");
-         for Main use ("helloworld.adb", "motors_test.adb", "search_test.adb");
+         for Source_Dirs use ("./**");
+         for Main use ("dispatcher.adb", "hand_controller_test.adb", "helloworld.adb", "motors_test.adb", "search_test.adb");
 
       when "Native" =>
-         for Source_Dirs use (".", "Layout", "Port_IO", "Turnouts", "Hand_Controller");
+         for Source_Dirs use ("./**");
          for Main use ("helloworld.adb", "motors_test.adb", "search_test.adb");
    end case;
 

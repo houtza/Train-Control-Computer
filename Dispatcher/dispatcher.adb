@@ -377,7 +377,7 @@ procedure Dispatcher is
       --
       -- Preconditions  :  Num_Trains have been intialized
 
-      Controller : Hand_Controllers.Hand_Controller_ID;
+      Controller : Hand_Controllers.Controller_ID;
       Engineer   : Engineers.Engineer_ID;
    begin
 
@@ -391,7 +391,7 @@ procedure Dispatcher is
       -- Enable the engineer tasks for all the trains
       for Train in 1 .. Num_Trains loop
          -- Convert a train number into a controller letter A=1, B=2, C=3
-         Controller := Hand_Controllers.Hand_Controller_ID'Val (Train - 1);
+         Controller := Hand_Controllers.Controller_ID'Val (Train - 1);
          Engineer   := Engineers.Engineer_ID (Train);
          Engineers.Operations.Enable (Engineer   => Engineer,
                                       Train      => Trains.Train_ID (Train),

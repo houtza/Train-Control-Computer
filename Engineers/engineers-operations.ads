@@ -11,7 +11,7 @@ package Engineers.Operations is
    --                     implement any other skill levels)
    procedure Enable (Engineer   : in Engineer_ID;
                      Train      : in Trains.Train_ID;
-                     Controller : in Hand_Controllers.Hand_Controller_ID);
+                     Controller : in Hand_Controllers.Controller_ID);
 
    -----------------------------------------------------------------------------
    -- Removes all resources assigned to the Engineer which ceases to command

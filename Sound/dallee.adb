@@ -1,3 +1,5 @@
+with Port_IO;
+with Ada.Unchecked_Conversion;
 package body Dallee is
     type Settings_Array is array (0 .. 7) of Dallee.Setting;
     for Settings_Array'Component_Size use 1;
@@ -10,7 +12,7 @@ package body Dallee is
                                                                 Target => Port_IO.Byte);
     procedure Set_Horn( Unit : in Dallee.Dallee_ID;
                         To : in Dallee.Setting) is
-    begin 
+    begin
         Current_Settings((Integer(Unit)-1)*2) := To;
         Port_IO.Out_Byte( Address => Base_Address,
                           Data => Settings_To_Byte(Current_Settings));
@@ -18,10 +20,10 @@ package body Dallee is
 
     procedure Set_Bell (Unit : in Dallee.Dallee_ID;
                         To : in Dallee.Setting) is
-    begin   
+    begin
         Current_Settings (Integer(Unit)*2-1) := To;
     end Set_Bell;
 
-begin   
+begin
     Port_IO.Out_Byte(Base_Address, 0);
 end Dallee;
