@@ -8,8 +8,8 @@ Respective year in college for members(from previous line order): Senior, Junior
 Team Policies for team "Justice League"
 # Project Goal
 
--Develop and implement the code necessary for the successful operation of the Flying Scotsman Model Railroad Control System as defined in the operations manual.
--[Operations Manual](http://www.cs.uni.edu/~adberns/courses/cs4740-f17/user_manual.pdf)
+- Develop and implement the code necessary for the successful operation of the Flying Scotsman Model Railroad Control System as defined in the operations manual.
+- [Operations Manual](http://www.cs.uni.edu/~adberns/courses/cs4740-f17/user_manual.pdf)
 
 # Team Communication
 
