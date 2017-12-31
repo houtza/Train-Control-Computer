@@ -27,6 +27,5 @@ Team Policies for team "Justice League"
 
 - Our group plans to either commit professor Berns, or submit a merge request so that he can overlook any code and then comment suggestions, fixes, etc., but ultimately, we will merge the final version and close the issue.
 
-# ALL ABOARD THE HYPE TRAIN
-![hypeee](http://i0.kym-cdn.com/photos/images/newsfeed/001/223/859/277.gif)
+
     
