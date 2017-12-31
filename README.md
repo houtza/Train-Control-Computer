@@ -1,7 +1,7 @@
 
  Team Name: Justice League
 
-Team Members: Justice Adams, Aaron Houst, Marcus Devens, and Daniel Alonso.
+Team Members: Justice Adams, Aaron Houtz, Marcus Devens, and Daniel Alonso.
 
 Respective year in college for members(from previous line order): Senior, Junior, Senior, Senior
 
